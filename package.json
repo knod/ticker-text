@@ -1,0 +1,31 @@
+{
+  "name": "ticker-text",
+  "version": "0.1.0",
+  "description": "A browser extension to give a little more accessiblity to online articles",
+  "main": "dist/ticker-text.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/knod/ticker-text.git"
+  },
+  "keywords": [
+    "accessibility",
+    "web",
+    "online",
+    "article",
+    "extension",
+    "browser",
+    "rsvp",
+    "speed",
+    "reading",
+    "reading"
+  ],
+  "author": "knod",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/knod/ticker-text/issues"
+  },
+  "homepage": "https://github.com/knod/ticker-text#readme"
+}
