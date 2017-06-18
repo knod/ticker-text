@@ -1,0 +1,3 @@
+// storage.js
+
+'use strict';

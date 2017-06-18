@@ -2,30 +2,34 @@
 // For later Firefox integration
 var browser = chrome || browser;
 
+console.log( "browser:", browser);
+
 // Right click on page
-function onContextCLick(info, tab) {
+function onContextCLick( info, tab ) {
     browser.tabs.query({
         "active": true,
         "currentWindow": true
     }, function (tabs) {
-        browser.tabs.sendMessage(tabs[0].id, {
+        browser.tabs.sendMessage( tabs[0].id, {
             "functiontoInvoke": "readSelectedText",
 			"selectedText": info.selectionText
         });
     });
-}
+};
+
 
 // Icon clicked in toolbar
-function onIconClick(info, tab) {
+function onIconClick( info, tab ) {
     browser.tabs.query({
         "active": true,
         "currentWindow": true
     }, function (tabs) {
-        browser.tabs.sendMessage(tabs[0].id, {
+        browser.tabs.sendMessage( tabs[0].id, {
             "functiontoInvoke": "readFullPage"
         });
     });
-}
+};
+
 
 // Write this in an expandable way in case we want to move beyond selection
 var contexts = ["selection"];
@@ -40,4 +44,4 @@ for (var i = 0; i < contexts.length; i++) {
 }
 
 // Handle clicking on the toolbar icon
-browser.browserAction.onClicked.addListener(function(tab) { onIconClick(); });
+browser.browserAction.onClicked.addListener( function( tab ) { onIconClick(); });

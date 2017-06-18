@@ -1,0 +1,223 @@
+/* iframe.css
+* 
+* Refer to main ui script for DOM structure -
+* src/ui/ui-manager.js on 06/18/17
+* 
+* Affects mostly core ui, but also others.
+*/
+
+/* ============================== */
+/* STRUCTURE */
+/* ============================== */
+
+html, body {
+	height: 100%;
+	overflow: hidden;
+	background-color: rgba( 0, 0, 0, .4 );
+}
+
+#__tt,
+#__tt * {
+	box-sizing: border-box;
+}
+
+#__tt {
+	display: flex;
+	flex-direction: column;
+	max-height: 100%;
+	top: 0;
+	left: 0;
+	width: 100%;
+	transition: top 100ms linear;
+}
+
+.__tt-main-section {
+	width: 100%;
+	display: flex;
+	/* For absolutely positioned children */
+	position: relative;
+}
+
+/* Should be 'top' and 'bottom' instead? */
+#__tt #__tt_above_bar {
+	top: 0;
+	/* function */
+	z-index: 50;
+}
+
+#__tt_below_bar {
+	top: 100%;
+	display: flex;
+}
+
+#__tt #__tt_bar {
+	/* ??: Will this work if font-size is declared lower down? */
+	min-height: 2em;
+	text-align: center;
+}
+
+/* ??: Generalize positions? Left, right, top, bottom, center, middle? */
+#__tt .__tt-bar-left,
+#__tt .__tt-bar-center,
+#__tt .__tt-bar-right {
+	/* vertically centered without flexbox */
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	height: 100%;
+	display: flex;
+	align-items: center;
+	align-content: center;
+	justify-content: center;
+}
+#__tt .__tt-bar-left,
+#__tt .__tt-bar-right {
+	padding: 0.75%;
+}
+#__tt .__tt-bar-left {
+	left: 0;
+}
+#__tt .__tt-bar-center {
+	height: 100%;
+	text-align: center;
+}
+#__tt .__tt-bar-right {
+	right: 0;
+}
+#__tt #__tt_close {
+	align-self: flex-start;
+}
+
+#__tt #__tt_text_elements {
+	/* em counts the widest possible text */
+	width: 13em;
+	height: 100%;
+}
+
+/* Horizontally and vertically centered without flexbox */
+/* Comes last to take precedence */
+#__tt .__tt-transform-centered {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate( -50% ,-50% );
+}
+
+
+/* ============================== */
+/* SKIN */
+/* ============================== */
+
+body { margin: 0; }
+
+#__tt div,
+#__tt span,
+#__tt a,
+#__tt li {
+	font-family: 'droid', serif;
+}
+
+/* Since using img src attribute, must change color in file */
+/*button svg,
+button path,
+button polygon {
+	fill: black;
+	stroke: black;
+}*/
+button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+button img {
+    width: 70%;
+    margin-left: -9%;
+}
+
+#__tt {
+	/*border: 1px solid gray;*/
+	/*border-left: 0;*/
+	/*border-right: 0;*/
+	background-color: rgba(250, 250, 250, 1);
+}
+
+.__tt-main-section {
+	border: 0;
+	border-bottom: 1px solid gray;
+}
+
+#__tt #__tt_bar,
+#__tt #__tt_bar div,
+#__tt #__tt_bar span,
+#__tt #__tt_bar a,
+#__tt #__tt_bar li {
+	font-size: 36px;
+}
+
+
+/* Should this be in readerly-main.css? new readerly-ui.css?*/
+#__tt button::-moz-focus-inner,
+#__tt input::-moz-focus-inner {
+	/*padding: 0;*/
+	/*background-color: rgba( 220, 220, 220, 1 );*/
+}
+
+#__tt button {
+	border-radius: 3px;
+}
+
+#__tt button {
+  background-color: rgba( 220, 220, 220, 1 );
+}
+#__tt button:active {
+	background-color: rgba( 200, 200, 200, 1 );
+}
+#__tt button:hover,
+#__tt .__tt-active-ui {
+	background-color: rgba(160, 160, 160, 1);
+	fill: rgba(100, 100, 100, 1);
+}
+/* TODO: add:
+#__tt .__tt-active-ui {
+  border-style: inset;
+}
+*/
+
+
+/* ============================== */
+/* FUNCTION */
+/* ============================== */
+
+#__tt .__tt-hidden {
+	display: none;
+}
+
+#__tt .__tt-rotating {
+    -webkit-animation:spin 4s linear infinite;
+    -moz-animation:spin 4s linear infinite;
+    animation:spin 4s linear infinite;
+}
+@-moz-keyframes spin {
+	100%
+	{ -moz-transform: rotate(360deg); }
+}
+@-webkit-keyframes spin {
+	100%
+	{ -webkit-transform: rotate(360deg); }
+}
+@keyframes spin {
+	100%
+	{ transform:rotate(360deg); }
+}
+
+#__tt .__tt-scrollable-y {
+	display: block;
+	overflow-y: scroll;
+	overflow-x: hidden;
+}
+
+#__tt .__tt-scrollable-y > * {
+	height: auto;
+	overflow: visible;
+}
+

@@ -7,14 +7,16 @@
     },
     "browser_action": {
 		"name": "Ticker Text",
-        "default_icon": "ticker-text-128.png",
+        "default_icon": "images/ticker-text-128.png",
         "default_title": "Ticker Text"
     },
     "content_scripts": [
         {
             "css": [
+                "css/parent-page.css"
             ],
             "js": [
+                "bundle.js"
             ],
             "matches": [
                 "http://*/*",
@@ -26,9 +28,9 @@
     "description": "Ticker Text - Accessible/Speed Reading via RSVP",
     "homepage_url": "http://github.com/knod/ticker-text",
     "icons": {
-        "128": "ticker-text-128.png",
-        "16": "ticker-text-16.png",
-        "48": "ticker-text-48.png"
+        "128": "images/ticker-text-128.png",
+        "48": "images/ticker-text-48.png",
+        "16": "images/ticker-text-16.png"
     },
     "manifest_version": 2,
     "name": "Ticker Text",
@@ -37,11 +39,13 @@
         "contextMenus",
         "activeTab",
 		"storage",
+        "webNavigation",
         "<all_urls>"
     ],
     "short_name": "Ticker Text",
-    "version": "0.1.0",
+    "version": "0.1.1",
 	"web_accessible_resources": [
+        "css/iframe.css",
 		"fonts/DroidSans-webfont.eot",
 		"fonts/DroidSans-webfont.svg",
 		"fonts/DroidSans-webfont.ttf",
