@@ -122,6 +122,8 @@ It uses some independent node packages:
 - sbd to split sentences
 - nouislider to create the slider inputs and scrubber bar
 
+<!-- add franc (and jquery?) -->
+
 A lot of the original features were suggested by synapse25.
 
 Thank you to everyone who has contributed to this project!

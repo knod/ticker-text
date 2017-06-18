@@ -1,0 +1,51 @@
+{
+    "author": "knod & synapse25",
+    "background": {
+        "scripts": [
+            "background.js"
+        ]
+    },
+    "browser_action": {
+		"name": "Ticker Text",
+        "default_icon": "ticker-text-128.png",
+        "default_title": "Ticker Text"
+    },
+    "content_scripts": [
+        {
+            "css": [
+            ],
+            "js": [
+            ],
+            "matches": [
+                "http://*/*",
+                "https://*/*",
+                "<all_urls>"
+            ]
+        }
+    ],
+    "description": "Ticker Text - Accessible/Speed Reading via RSVP",
+    "homepage_url": "http://github.com/knod/ticker-text",
+    "icons": {
+        "128": "ticker-text-128.png",
+        "16": "ticker-text-16.png",
+        "48": "ticker-text-48.png"
+    },
+    "manifest_version": 2,
+    "name": "Ticker Text",
+    "offline_enabled": true,
+    "permissions": [
+        "contextMenus",
+        "activeTab",
+		"storage",
+        "<all_urls>"
+    ],
+    "short_name": "Ticker Text",
+    "version": "0.1.0",
+	"web_accessible_resources": [
+		"fonts/DroidSans-webfont.eot",
+		"fonts/DroidSans-webfont.svg",
+		"fonts/DroidSans-webfont.ttf",
+		"fonts/DroidSans-webfont.woff",
+        "images/*"
+	]
+}
