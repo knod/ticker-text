@@ -4,10 +4,13 @@
 (function(){
 
 
-	console.log('__dirname:', __dirname);
+	// console.log('__dirname:', __dirname);
 
 	var constructors = {
-		UI: require( './ui/ui-manager.js' )
+		topLevel: { UI: require( './ui/ui-manager.js' ) },
+		ui: {
+			
+		}
 	};
 
 	var filepaths = {

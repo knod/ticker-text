@@ -1,4 +1,8 @@
-// ticker-text.js
+/* ticker-text.js
+* 
+* TODO:
+* - User option to start reading on opening
+*/
 
 'use strict';
 
@@ -17,16 +21,24 @@
     }
 }(this, function ( $ ) {
 
-	"use strict";
+	'use strict';
 
 	var TickerText = function ( constructors, filepaths ) {
-	/*
+	/* ( {}, {} ) -> TickerText
 	* 
 	* `constructors` has all the constructors for /everything/
 	*/
 
 		var ttxt = {};
 		
+		var state = {};
+		// Change stuff below here to ttxt and put ttxt on the trigger list
+		state.isOpen = false;
+		state.close = function () {
+			state.isOpen = false;
+		}
+		state.id = 'tickerTextState';
+
 		// var UI = require( constructors.ui );
 			// Settings 	= require('./lib/settings/Settings.js'),
 			// Storage 	= require('./lib/ReaderlyStorage.js'),
@@ -40,21 +52,47 @@
 			// SpeedSetsUI = require('./lib/settings/SpeedSettings.js'),
 			// WordSetsUI 	= require('./lib/settings/WordSettings.js');
 
-		var ui = new constructors.UI( {}, document.body, constructors, filepaths );
 
 		ttxt._init = function () {
+
+			var ui = new constructors.UI( state, document.body, constructors.ui, filepaths.ui );
+
+			ui.open();
 
 			return ttxt;
 		};
 
 
-		// =========== ADD NODE, ETC. =========== \\
-		// Don't show at start, only when prompted
-		ttxt._init();
+		// ==============================
+		// EXTENSION EVENT LISTENER
+		// ==============================
+		var browser = chrome || browser;
 
-		// To be called in a script
+		browser.extension.onMessage.addListener(function (request, sender, sendResponse) {
+
+			var func = request.functiontoInvoke;
+
+			// if ( func === 'readSelectedText' ) { readSelectedText(); }
+
+			// Don't show at start, only when prompted
+			// else 
+			if ( func === 'openTickerText' ) {
+				if ( !state.isOpen ) {
+					state.isOpen = true;
+					ttxt._init();
+				} else {
+					// readArticle();
+				}
+			}
+
+		});  // End extension event listener
+
+
+
+		// To be used in a script
 		return ttxt;
 	};  // End TickerText() -> {}
+
 
 	// To put on the window object, or export into a module
     return TickerText;

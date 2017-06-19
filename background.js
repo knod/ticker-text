@@ -25,7 +25,8 @@ function onIconClick( info, tab ) {
         "currentWindow": true
     }, function (tabs) {
         browser.tabs.sendMessage( tabs[0].id, {
-            "functiontoInvoke": "readFullPage"
+            // "functiontoInvoke": "readFullPage"
+            "functiontoInvoke": "openTickerText"
         });
     });
 };
