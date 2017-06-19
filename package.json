@@ -30,6 +30,8 @@
   },
   "homepage": "https://github.com/knod/ticker-text#readme",
   "dependencies": {
-    "jquery": "^3.2.1"
+    "@knod/playback": "^1.0.1",
+    "jquery": "^3.2.1",
+    "wolfy87-eventemitter": "^5.1.0"
   }
 }

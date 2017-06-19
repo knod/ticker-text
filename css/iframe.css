@@ -54,6 +54,7 @@ html, body {
 	/* ??: Will this work if font-size is declared lower down? */
 	min-height: 2em;
 	text-align: center;
+	justify-content: space-between;
 }
 
 /* ??: Generalize positions? Left, right, top, bottom, center, middle? */

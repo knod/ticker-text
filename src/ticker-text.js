@@ -30,14 +30,14 @@
 	*/
 
 		var ttxt = {};
-		
-		var state = {};
-		// Change stuff below here to ttxt and put ttxt on the trigger list
-		state.isOpen = false;
-		state.close = function () {
-			state.isOpen = false;
-		}
-		state.id = 'tickerTextState';
+
+		ttxt.close 	= function () { state.isOpen = false; };
+		ttxt.open 	= function () { state.isOpen = true; };
+
+		ttxt.storage, ttxt.state, ttxt.ui;
+
+
+
 
 		// var UI = require( constructors.ui );
 			// Settings 	= require('./lib/settings/Settings.js'),
@@ -52,15 +52,28 @@
 			// SpeedSetsUI = require('./lib/settings/SpeedSettings.js'),
 			// WordSetsUI 	= require('./lib/settings/WordSettings.js');
 
+		ttxt._afterLoad = function ( oldSettings ) {
+
+			var top = constructors.topLevel;
+
+			ttxt.state 	= new top.State( oldSettings, ttxt.storage, top.Emitter );
+			ttxt.ui 	= new top.UI( ttxt.state, document.body, constructors.ui, filepaths.ui );
+			ttxt.ui.addTriggerable( ttxt );
+
+
+		};  // End ttxt._afterLoad()
+
 
 		ttxt._init = function () {
 
-			var ui = new constructors.UI( state, document.body, constructors.ui, filepaths.ui );
+			var top = constructors.topLevel;
 
-			ui.open();
+			ttxt.storage = new top.Storage();
+			ttxt.storage.loadAll( ttxt._afterLoad );
+
 
 			return ttxt;
-		};
+		};  // End ttxt._init
 
 
 		// ==============================
@@ -77,9 +90,9 @@
 			// Don't show at start, only when prompted
 			// else 
 			if ( func === 'openTickerText' ) {
-				if ( !state.isOpen ) {
-					state.isOpen = true;
-					ttxt._init();
+				if ( ttxt.state === undefined || !ttxt.state.isOpen ) {
+					// ttxt._init();  // TEMP
+					ttxt.ui.open();
 				} else {
 					// readArticle();
 				}
@@ -87,6 +100,8 @@
 
 		});  // End extension event listener
 
+		// TEMP so it's less annoying when starting each time
+		ttxt._init();
 
 
 		// To be used in a script

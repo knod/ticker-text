@@ -45,11 +45,8 @@
     "short_name": "Ticker Text",
     "version": "0.1.1",
 	"web_accessible_resources": [
-        "css/iframe.css",
-		"fonts/DroidSans-webfont.eot",
-		"fonts/DroidSans-webfont.svg",
-		"fonts/DroidSans-webfont.ttf",
-		"fonts/DroidSans-webfont.woff",
-        "images/*"
+        "css/*",
+        "images/*",
+		"fonts/*"
 	]
 }

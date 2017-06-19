@@ -123,6 +123,12 @@ It uses some independent node packages:
 - nouislider to create the slider inputs and scrubber bar
 
 <!-- add franc (and jquery?) -->
+<!--
+
+add icon attributions
+(go back one sentence) Reply All by Quan Do from the Noun Project
+
+ -->
 
 A lot of the original features were suggested by synapse25.
 

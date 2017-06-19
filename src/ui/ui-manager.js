@@ -78,7 +78,7 @@
 
 		// =========== HOOKS =========== \\
 
-		ttui.addToTriggerList = function ( triggerable ) {
+		ttui.addTriggerable = function ( triggerable ) {
 		/* {} -> TTUI */
 
 			if ( !ttui._toTrigger[ triggerable.id ] ) {
@@ -104,7 +104,6 @@
 
 		ttui.open = function () {
 			ttui.show();
-			console.log( 'toTrigger', ttui._toTrigger );
 			for ( var trigID in ttui._toTrigger ) {
 				let obj = ttui._toTrigger[ trigID ]
 				if ( obj.open ) obj.open();
@@ -115,7 +114,7 @@
 
 		ttui.show = function () {
 			$iframe.show();
-			$(tickerText).slideDown( 200 );
+			$(tickerText).slideDown( 200 );  // can't `.update()` at end
 			return ttui;
 		};
 
@@ -153,7 +152,7 @@
 			var top 			= scrollable.getBoundingClientRect().top,
 			// Takes into account the height of the element that's
 			// currently going to be scrolled
-				height 			= grower.getBoundingClientRect().height,
+				height 			= grower.getBoundingClientRect().height || 0,
 			// The bottom of where the contents would end if you weren't
 			// scrolled and no adjustments for size were made.
 				potentialBottom = top + height,
@@ -162,6 +161,7 @@
 			// How much needs to be subtracted (almost, see below) from the
 			// scrollable node's height (not contents) in order to fit on the page.
 				diff 			= (potentialBottom - screenBottom);
+			console.log("height", height)
 
 			// Have taken care off stuff above and in the contents
 			// Now will account for all the padding/borders, etc at
@@ -243,15 +243,20 @@
 			styles1.href 	= browser.runtime.getURL( filepaths.core );
 			styles1.type 	= "text/css";
 			styles1.rel 	= "stylesheet";
-
 			$(styles1).appendTo( iDoc.head );
+
+			var styles2 	= iDoc.createElement("link");
+			styles2.href 	= browser.runtime.getURL( filepaths.settings );
+			styles2.type 	= "text/css";
+			styles2.rel 	= "stylesheet";
+			$(styles2).appendTo( iDoc.head );
 
 			// ??: Is this useful?
 			ttui.nodes 	= {
-				iDoc: 			iDoc,
+				doc: 			iDoc,
 				head: 			iDoc.head,
 				body: 			iDoc.body,
-				tickerText: 	tickerText,
+				app: 			tickerText,
 				above: 			$(tickerText).find('#__tt_above_bar')[0],
 				bar: 			$(tickerText).find('#__tt_bar')[0],
 				barLeft: 		$(tickerText).find('#__tt_bar_left')[0],
@@ -266,11 +271,6 @@
 				below: 			$(tickerText).find('#__tt_below_bar')[0]
 			}
 
-			for ( let coni = 0; coni < constructors.length; coni++ ) {
-				let Constr = constructors[ coni ];
-				new Constr( state, ttui );
-			}
-
 			return ttui;
 		};  // End ttui._addNodes()
 
@@ -283,11 +283,16 @@
 				// This is in the wrong place
 				// Reconfig needed. This should construct state?
 				// Create parent object instead?
-				.addToTriggerList( state );
+				.addTriggerable( state );
+
+			for ( let key in constructors ) {
+				let Constr = constructors[ key ];
+				new Constr( state, ttui, filepaths );
+			}
 
 			// This should not be visible until it's .show()n
 			$iframe.hide();
-			// $(tickerText).hide( 0, ttui.update )
+			// $(tickerText).hide( 0, ttui.update )  // breaks things?
 			$('#__tt_iframe').hide(0);
 
 			return ttui;
