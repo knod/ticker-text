@@ -122,7 +122,7 @@ It uses some independent node packages:
 - sbd to split sentences
 - nouislider to create the slider inputs and scrubber bar
 
-<!-- add franc (and jquery?) -->
+<!-- add franc, wolfy87 (and jquery?) -->
 <!--
 
 add icon attributions

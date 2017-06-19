@@ -11,6 +11,7 @@
 			Storage: require( './data/storage.js' ),
 			Emitter: require( 'wolfy87-eventemitter' ),
 			State: require( './data/state.js' ),
+			Parser: require( './parse/parser.js' ),
 			UI: require( './ui/ui-manager.js' )
 		},
 		ui: {
