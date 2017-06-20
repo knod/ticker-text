@@ -11,7 +11,7 @@ function onContextCLick( info, tab ) {
         "currentWindow": true
     }, function (tabs) {
         browser.tabs.sendMessage( tabs[0].id, {
-            "functiontoInvoke": "readSelectedText",
+            "action": "readSelectedText",
 			"selectedText": info.selectionText
         });
     });
@@ -25,8 +25,8 @@ function onIconClick( info, tab ) {
         "currentWindow": true
     }, function (tabs) {
         browser.tabs.sendMessage( tabs[0].id, {
-            // "functiontoInvoke": "readFullPage"
-            "functiontoInvoke": "openTickerText"
+            // "action": "readFullPage"
+            "action": "openTickerText"
         });
     });
 };

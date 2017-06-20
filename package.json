@@ -1,6 +1,6 @@
 {
   "name": "ticker-text",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "A browser extension to give a little more accessiblity to online articles",
   "main": "dist/ticker-text.js",
   "scripts": {
@@ -32,6 +32,9 @@
   "dependencies": {
     "@knod/playback": "^1.0.1",
     "@knod/plug-n-parse": "^1.0.0",
+    "@knod/sbd": "^2.0.2",
+    "@knod/unfluff": "^1.3.2",
+    "franc": "^3.1.0",
     "jquery": "^3.2.1",
     "wolfy87-eventemitter": "^5.1.0"
   }

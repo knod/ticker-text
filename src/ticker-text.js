@@ -31,35 +31,15 @@
 
 		var ttxt = {};
 
-		ttxt.close 	= function () { state.isOpen = false; };
-		ttxt.open 	= function () { state.isOpen = true; };
-
 		ttxt.storage, ttxt.state, ttxt.ui;
-
-
-
-
-		// var UI = require( constructors.ui );
-			// Settings 	= require('./lib/settings/Settings.js'),
-			// Storage 	= require('./lib/ReaderlyStorage.js'),
-			// WordNav 	= require('./lib/parse/WordNav.js'),
-			// WordSplitter= require('./lib/parse/WordSplitter.js'),
-			// Delayer 	= require('@knod/string-time'),
-			// Timer 		= require('./lib/playback/ReaderlyTimer.js'),
-			// Display 	= require('./lib/ReaderlyDisplay.js'),
-			// PlaybackUI 	= require('./lib/playback/PlaybackUI.js'),
-			// SettingsUI 	= require('./lib/settings/ReaderlySettings.js'),
-			// SpeedSetsUI = require('./lib/settings/SpeedSettings.js'),
-			// WordSetsUI 	= require('./lib/settings/WordSettings.js');
 
 		ttxt._afterLoad = function ( oldSettings ) {
 
 			var top = constructors.topLevel;
 
 			ttxt.state 	= new top.State( oldSettings, ttxt.storage, top.Emitter );
+			ttxt.parser = new top.Parser();
 			ttxt.ui 	= new top.UI( ttxt.state, document.body, constructors.ui, filepaths.ui );
-			ttxt.ui.addTriggerable( ttxt );
-
 
 		};  // End ttxt._afterLoad()
 
@@ -77,24 +57,112 @@
 
 
 		// ==============================
+		// RUNTIME HANDLERS
+		// ==============================
+
+		ttxt.close = function () {
+			ttxt.state.isOpen = false;
+			ttxt.ui.close();
+		};
+		ttxt.open = function () {
+			ttxt.state.isOpen = true;
+			ttxt.ui.wait();  // Will be hidden elsewhere
+			ttxt.ui.open();
+		};
+
+
+		ttxt.read = function () {
+
+			// var sentenceWords = ttxt.parser.parse( node, false );
+			// console.log( sentenceWords );
+
+			// if ( ttxt.parser.debug ) {  // Help non-coder devs identify some bugs
+			// 	console.log('~~~~~parse debug~~~~~ If any of those tests failed, the problem isn\'t with Ticker Text, it\'s with one of the other libraries. That problem will have to be fixed later.');
+			// }
+
+			// ttxt.state.process( sentenceWords );
+			// ttxt.ui.start();
+
+			ttxt.state.emitter.trigger( 'playTT', [ ttxt, ttxt.state ] );
+			ttxt.ui.play();
+
+			return ttxt;
+		};
+
+
+		ttxt.process = function ( node ) {
+			var sentenceWords = ttxt.parser.parse( node, false );
+
+			if ( ttxt.parser.debug ) {  // Help non-coder devs identify some bugs
+				console.log('~~~~~parse debug~~~~~ If any of those tests failed, the problem isn\'t with Ticker Text, it\'s with one of the other libraries. That problem will have to be fixed later.');
+			}
+
+			return ttxt.state.process( sentenceWords );
+		};
+
+
+		ttxt.processSelectedText = function () {
+			var contents = document.getSelection().getRangeAt(0).cloneContents();
+			var $container = $('<div></div>');
+			$container.append(contents);
+			// if ( !ttxt.state.isOpen ) { ttxt.ui.open(); }
+			// // Always start reading right away
+			// ttxt.read( $container[0] );
+
+			return ttxt.process( $container[0] );
+		};
+
+
+		ttxt.processFullPage = function () {
+			var $clone = $('html').clone();
+			// // First time opens, when open, starts reading (customizable so can start right away?)
+			// if ( !ttxt.state.isOpen ) { ttxt.ui.open(); }
+			// else { ttxt.read( $clone[0] ); }
+// debugger;
+			return ttxt.process( $clone[0] );
+		};
+
+
+		ttxt.readSelectedText = function () {
+			if ( !ttxt.state.isOpen ) { ttxt.open(); }
+			// Always start reading right away
+			ttxt.read();
+
+			return ttxt;
+		};
+
+
+		ttxt.readFullPage = function () {
+			// First time opens. When open, starts reading
+			// TODO: ??: customizable so can start right away?
+			if ( !ttxt.state.isOpen ) { ttxt.open(); }
+			// else { ttxt.read(); }
+
+			return ttxt;
+		};
+
+
+		// ==============================
 		// EXTENSION EVENT LISTENER
 		// ==============================
 		var browser = chrome || browser;
 
-		browser.extension.onMessage.addListener(function (request, sender, sendResponse) {
+		browser.extension.onMessage.addListener( function ( request, sender, sendResponse ) {
 
-			var func = request.functiontoInvoke;
+			var action = request.action;
 
-			// if ( func === 'readSelectedText' ) { readSelectedText(); }
+			// if ( action === 'readSelectedText' ) { processSelectedText(); }
 
 			// Don't show at start, only when prompted
 			// else 
-			if ( func === 'openTickerText' ) {
+			if ( action === 'openTickerText' ) {
 				if ( ttxt.state === undefined || !ttxt.state.isOpen ) {
 					// ttxt._init();  // TEMP
-					ttxt.ui.open();
-				} else {
-					// readArticle();
+					// ttxt.ui.open();
+					ttxt.processFullPage();
+				// } else {
+				// 	// ttxt.processFullPage();
+					ttxt.readFullPage();
 				}
 			}
 

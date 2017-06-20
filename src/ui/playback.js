@@ -37,6 +37,8 @@
 	* 
 	*/
 		var tPUI = {};
+		tPUI.id = 'playbackUI';
+
 		var browser = chrome || browser;
 
 		tPUI.modifierKeysDown = [];  // Will be emptied when app is closed
@@ -89,6 +91,8 @@
 		};
 		tPUI.open = function () {
 			tPUI.isOpen = true;
+			tPUI.controller.current();  // show current fragment
+			$(playPauseFeedback).hide();
 			return tPUI;
 		};
 		tPUI.close = function () {
@@ -128,16 +132,16 @@
 
 
 		// ----- DOM EVENTS ----- \\
-		tPUI._play = function () {
+		tPUI.play = function () {
 			$(playFeedback).removeClass('__tt-hidden');
 			$(pauseFeedback).addClass('__tt-hidden');
 			// https://jsfiddle.net/aL7kxe78/3/ fadeOut (ends with display: none)
 			// http://stackoverflow.com/a/4549418/3791179 <- opacity
-			var x = $(playPauseFeedback).fadeTo(0, 0.7).fadeTo(700, 0)
+			$(playPauseFeedback).fadeTo(0, 0.7).fadeTo(700, 0)
 			return tPUI;
 		};
 
-		tPUI._pause = function () {
+		tPUI.pause = function () {
 			$(pauseFeedback).removeClass('__tt-hidden');
 			$(playFeedback).addClass('__tt-hidden');
 			$(playPauseFeedback).fadeTo(0, 0.7).fadeTo(700, 0)
@@ -145,13 +149,13 @@
 		};
 
 		tPUI._togglePlayPause = function () {
-			tPUI.control.toggle();
+			tPUI.controller.toggle();
 			return tPUI;
 		};
 
 
 		tPUI._rewindSentence = function () {
-			tPUI.control.prevSentence();
+			tPUI.controller.prevSentence();
 			return tPUI;
 		};
 
@@ -176,7 +180,7 @@
 		tPUI._showProgress = function ( evnt, control, fraction ) {
 		// TODO: Needs some work
 			// if ( !tPUI.isScrubbing ) {  // Don't mess timing up with transitions
-			// 	progressNode.noUiSlider.set( congtrol.getIndex() );  // version 8 nouislider
+			// 	progressNode.noUiSlider.set( control.getIndex() );  // version 8 nouislider
 			// }
 			return tPUI;
 		};
@@ -184,7 +188,7 @@
 
 		tPUI._start = function () {
 			// progressNode.noUiSlider.updateOptions({
-			// 	range: { min: 0, max: ( tPUI.control.getLength() - 1 ) }
+			// 	range: { min: 0, max: ( tPUI.controller.getLength() - 1 ) }
 			// });
 			return tPUI;
 		}
@@ -198,14 +202,14 @@
 
 
 		tPUI._updateScrubbedWords = function ( values, handle ) {
-			// tPUI.control.jumpTo( parseInt( values[ handle ] ) );
+			// tPUI.controller.jumpTo( parseInt( values[ handle ] ) );
 			return tPUI;
 		};  // End tPUI._updateScrubbedWords()
 
 
 		tPUI._stopScrubbing = function ( values, handle ) {
 			// tPUI.isScrubbing = false;
-			// // tPUI.control.disengageJumpTo();
+			// // tPUI.controller.disengageJumpTo();
 			return tPUI;
 		};  // End tPUI._stopScrubbing()
 
@@ -244,11 +248,11 @@
 			}
 
 			if ( tPUI.modifierKeysDown.indexOf( smod ) > -1 ) {
-				if ( keyCode === 39 ) { tPUI.control.nextSentence(); }
-				else if ( keyCode === 37 ) { tPUI.control.prevSentence(); }
+				if ( keyCode === 39 ) { tPUI.controller.nextSentence(); }
+				else if ( keyCode === 37 ) { tPUI.controller.prevSentence(); }
 			} else {
-				if ( keyCode === 39 ) { tPUI.control.nextWord(); }
-				else if ( keyCode === 37 ) { tPUI.control.prevWord(); }
+				if ( keyCode === 39 ) { tPUI.controller.nextWord(); }
+				else if ( keyCode === 37 ) { tPUI.controller.prevWord(); }
 			}
 
 			return tPUI;
@@ -280,11 +284,11 @@
 
 		tPUI._addEvents = function ( coreUIObj ) {
 			// Timer events
-			$(tPUI.control).on( 'playBegin', tPUI._play );
-			$(tPUI.control).on( 'pauseFinish', tPUI._pause );
-			$(tPUI.control).on( 'startFinish', tPUI._start );
-			$(tPUI.control).on( 'newWordFragment', tPUI._showNewFragment );
-			// $(tPUI.control).on( 'progress', tPUI._showProgress );
+			state.emitter.on( 'playBegin', tPUI.play );
+			state.emitter.on( 'pauseFinish', tPUI.pause );
+			state.emitter.on( 'startFinish', tPUI._start );
+			state.emitter.on( 'newWordFragment', tPUI._showNewFragment );
+			// state.emitter.on( 'progress', tPUI._showProgress );
 
 			// // Scrubber events
 			// progressNode.noUiSlider.on( 'start', tPUI._startScrubbing );
@@ -308,8 +312,8 @@
 
 		tPUI._init = function ( coreUIObj ) {
 
-			tPUI.control = new PlaybackControl( state );
-			state.setProcessor( tPUI.control );
+			tPUI.controller = new PlaybackControl( state );
+			state.setProcessor( tPUI.controller );
 
 			tPUI.modifierKeysDown = [];  // TODO: Empty non-destructively
 			tPUI.sentenceModifierKey = 18;  // 'alt' TODO: Modifiable?

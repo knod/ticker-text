@@ -92,24 +92,49 @@
 
 		// =========== RUNTIME ACTIONS =========== \\
 
-		ttui.close = function () {
-		// This is where everything gets closed, paused, put away
-			ttui.hide();
+		ttui.triggerTriggerable = function ( ourFuncName, theirFuncName ) {
+			ttui[ ourFuncName ]();
 			for ( var trigID in ttui._toTrigger ) {
 				let obj = ttui._toTrigger[ trigID ]
-				if ( obj.close ) obj.close();
+				if ( obj[ theirFuncName ] ) obj[ theirFuncName ]();
 			};
 			return ttui;
+		};  // End ttui.triggerTriggerable()
+
+		ttui.close = function () {
+		// This is where everything gets closed, paused, put away
+			// ttui.hide();
+			// for ( var trigID in ttui._toTrigger ) {
+			// 	let obj = ttui._toTrigger[ trigID ]
+			// 	if ( obj.close ) obj.close();
+			// };
+			// return ttui;
+			return ttui.triggerTriggerable( 'hide', 'close' );
 		};
 
 		ttui.open = function () {
-			ttui.show();
-			for ( var trigID in ttui._toTrigger ) {
-				let obj = ttui._toTrigger[ trigID ]
-				if ( obj.open ) obj.open();
-			};
-			return ttui;
+			// ttui.show();
+			// for ( var trigID in ttui._toTrigger ) {
+			// 	let obj = ttui._toTrigger[ trigID ]
+			// 	if ( obj.open ) obj.open();
+			// };
+			// return ttui;
+			return ttui.triggerTriggerable( 'show', 'open' );
 		};
+
+		ttui.start = function () {
+			// ttui.show();
+			// for ( var trigID in ttui._toTrigger ) {
+			// 	let obj = ttui._toTrigger[ trigID ]
+			// 	if ( obj.play ) obj.play();
+			// };
+			// return ttui;
+			return ttui.triggerTriggerable( 'show', 'play' );
+		};
+
+		ttui.play = function () {
+			return ttui.triggerTriggerable( 'show', 'play' );
+		}
 
 
 		ttui.show = function () {
@@ -117,6 +142,10 @@
 			$(tickerText).slideDown( 200 );  // can't `.update()` at end
 			return ttui;
 		};
+
+		ttui.wait = function () {
+			ttui._toTrigger.playbackUI.wait();
+		}
 
 		ttui.hide = function () {
 			$iframe.hide();
@@ -280,10 +309,10 @@
 			$('#__tt_iframe').remove();
 			ttui._addNodes()
 				._addEvents()
-				// This is in the wrong place
-				// Reconfig needed. This should construct state?
-				// Create parent object instead?
-				.addTriggerable( state );
+				// // This is in the wrong place
+				// // Reconfig needed. This should construct state?
+				// // Create parent object instead?
+				// .addTriggerable( state );
 
 			for ( let key in constructors ) {
 				let Constr = constructors[ key ];

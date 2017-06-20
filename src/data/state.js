@@ -129,10 +129,12 @@
 		// TODO: put some defaults up in here
 
 		// ==== STATE ====
+
+		// Doesn't belong here, not sure wher to put it
+		// It's so we can use playback's processing without needing
+		// playback to be present at the top level
 		ttst.process = function ( text ) { return text; };  // default
 
-		// So we can use playback's processing without needing
-		// playback to be present at the top level
 		ttst.setProcessor = function ( obj ) {
 			ttst.process = obj.process;
 			return ttst;

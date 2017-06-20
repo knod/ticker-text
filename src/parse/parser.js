@@ -34,7 +34,8 @@
     */
     	var tPar = {};
 
-    	tPar.debug = false;
+    	tPar.debug 		= false;
+    	tPar.parsedText = null;
 
     	tPar.cleanNode = function ( node ) {
     	/* ( DOM Node ) -> same DOM Node
@@ -145,7 +146,12 @@
     		tPar.splitSentences
 		);
 
-		tPar.parse = tPar.piper.parse;
+    	// RUNTIME
+		tPar.parse = function ( input, debug ) {
+			if ( debug ) { tPar.debug = debug; }
+			tPar.parsedText = tPar.piper.parse( input, debug );	
+			return tPar.parsedText;
+		};
 
 
 		return tPar;
