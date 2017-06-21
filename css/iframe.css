@@ -58,9 +58,9 @@ html, body {
 }
 
 /* ??: Generalize positions? Left, right, top, bottom, center, middle? */
-#__tt .__tt-bar-left,
-#__tt .__tt-bar-center,
-#__tt .__tt-bar-right {
+#__tt #__tt_bar_left,
+#__tt #__tt_bar_center,
+#__tt #__tt_bar_right {
 	/* vertically centered without flexbox */
 	position: absolute;
 	top: 50%;
@@ -71,18 +71,18 @@ html, body {
 	align-content: center;
 	justify-content: center;
 }
-#__tt .__tt-bar-left,
-#__tt .__tt-bar-right {
+#__tt #__tt_bar_left,
+#__tt #__tt_bar_right {
 	padding: 0.75%;
 }
-#__tt .__tt-bar-left {
+#__tt #__tt_bar_left {
 	left: 0;
 }
-#__tt .__tt-bar-center {
+#__tt #__tt_bar_center {
 	height: 100%;
 	text-align: center;
 }
-#__tt .__tt-bar-right {
+#__tt #__tt_bar_right {
 	right: 0;
 }
 #__tt #__tt_close {

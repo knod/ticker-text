@@ -60,7 +60,7 @@
 	<div id="__tt_above_bar" class="__tt-main-section"></div>\n\
 	<div id="__tt_bar" class="__tt-main-section">\n\
 		<div id="__tt_bar_left" class="__tt-bar-section"></div>\n\
-		<div id="__tt_bar_center" class="__tt-bar-section __tt-transform-centered">\n\
+		<div id="__tt_bar_center" class="__tt-bar-section">\n\
 			<div id="__tt_above_text_elements"></div>\n\
 			<div id="__tt_left_text_elements"></div>\n\
 			<div id="__tt_text_elements"></div>\n\

@@ -58,7 +58,7 @@
 		var progStr = '<div id="__tt_progress"></div>';
 
 		var indicatorStr 	= '<div id="__tt_indicator" class="__tt-transform-centered"></div>',
-			textButtonStr 	= '<button id="__tt_text_button" class="__tt-transform-centered"></button>';
+			textButtonStr 	= '<button id="__tt_text_button"></button>';
 
 		var loadingPath 	= browser.extension.getURL('images/swirl.svg'),
 			loadingStr 		= '<div id="__tt_loading" class="__tt-hidden"><img src="' + loadingPath + '"></img></div>';

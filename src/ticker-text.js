@@ -41,6 +41,12 @@
 			ttxt.parser = new top.Parser();
 			ttxt.ui 	= new top.UI( ttxt.state, document.body, constructors.ui, filepaths.ui );
 
+
+			// TEMP (For less annoying dev for now)
+			ttxt.processFullPage();
+			ttxt.readFullPage();
+
+
 		};  // End ttxt._afterLoad()
 
 
@@ -170,7 +176,6 @@
 
 		// TEMP so it's less annoying when starting each time
 		ttxt._init();
-
 
 		// To be used in a script
 		return ttxt;
