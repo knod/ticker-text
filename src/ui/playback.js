@@ -7,6 +7,8 @@
 * Inspired by https://github.com/jamestomasino/read_plugin/blob/master/Read.js
 * 
 * TODO:
+* - Revert to playing/pausing after dragging slider, using arrow
+* 	keys, etc.
 * - click on 'timer' pauses, lift off plays if was playing
 */
 
@@ -219,7 +221,7 @@
 
 		tPUI._stopScrubbing = function ( values, handle ) {
 			tPUI.isScrubbing = false;
-			// // tPUI.player.disengageJumpTo();
+			tPUI.player.revert();
 			return tPUI;
 		};  // End tPUI._stopScrubbing()
 
@@ -227,7 +229,7 @@
 		tPUI.keyUp = function ( evnt ) {
 
 			// If it was closed, the list of keys down is destroyed anyway
-			if (!tPUI.isOpen) { return tPUI; };
+			if ( !tPUI.isOpen ) { return tPUI; };
 
 			var keyCode = evnt.keyCode || evnt.which || evnt.charCode;
 			var smod 	= tPUI.sentenceModifierKey;
@@ -237,6 +239,10 @@
 
 				var smodi = tPUI.modifierKeysDown.indexOf( smod );
 				if ( smodi > -1 ) { tPUI.modifierKeysDown.splice( smodi ) }
+
+			// If it's not a modifier key, revert
+			} else {
+				tPUI.player.revert()
 			}
 
 			return tPUI;
@@ -247,7 +253,7 @@
 
 			// If the app isn't open, don't want to get errors for trying
 			// to do impossible stuff and don't want to change position in text
-			if (!tPUI.isOpen) { return tPUI; };
+			if ( !tPUI.isOpen ) { return tPUI; };
 
 			var keyCode = evnt.keyCode || evnt.which || evnt.charCode;
 			var smod = tPUI.sentenceModifierKey;
