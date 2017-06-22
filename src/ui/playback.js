@@ -1,14 +1,16 @@
 /* playback.js
 * 
-* Pause, play, rewind, fast-forward, and scrub
-* controls. Includes progress bar. Name is not
-* accurate, but it is clear and recognizable.
+* Pause, play, rewind, fast-forward, and scrub ui. Includes
+* progress bar. Name is not accurate, but it is clear and
+* recognizable.
 * 
 * Inspired by https://github.com/jamestomasino/read_plugin/blob/master/Read.js
 * 
 * TODO:
-* - Revert to playing/pausing after dragging slider, using arrow
-* 	keys, etc.
+* - ??: How to prevent play/pause flashes when not wanted? Maybe
+* 	default `player` shouldn't fire playBegin, etc. if already
+* 	playing, etc?
+* - ??: How to prevent double triggering on spacebar down then up?
 * - click on 'timer' pauses, lift off plays if was playing
 */
 
