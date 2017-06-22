@@ -22,7 +22,7 @@
     } else if (typeof module === 'object' && module.exports) {
         // Node. Does not work with strict CommonJS, but only CommonJS-like
         // environments that support module.exports, like Node.
-        module.exports = ttpFactory( require('jquery'), require('@knod/playback'), require( '@knod/nouislider' ) );
+        module.exports = ttpFactory( require('jquery'), require('@knod/playback'), require( 'nouislider' ) );
     } else {
         // Browser globals
         root.TTPlaybackUI = ttpFactory( root.jQuery, root.Playback, root.noUiSlider );
@@ -92,6 +92,9 @@
 		tPUI.open = function () {
 			tPUI.isOpen = true;
 			tPUI.player.current();  // show current fragment
+			// For scrubber bar when something new is processed
+			// TODO: ??: Give `player` a 'processBegin' and 'processFinish'?
+			 tPUI._setInitialValues();
 			$(playPauseFeedback).hide();
 			return tPUI;
 		};
@@ -310,6 +313,7 @@
 			// Arrow keys only listen to the keydown and keyup event, not keypress
 			$(coreUIObj.nodes.doc).on( 'keydown', tPUI.keyDown );
 			$(coreUIObj.nodes.doc).on( 'keyup', tPUI.keyUp );
+			// TODO: ??: Should we really listen to the rest of the document?
 			$(document.body).on( 'keydown', tPUI.keyDown );
 			$(document.body).on( 'keyup', tPUI.keyUp );
 
@@ -336,7 +340,6 @@
 			tPUI.sentenceModifierKey = 18;  // 'alt' TODO: Modifiable?
 
 			progressNode = nodes.progressNode = $(progStr)[0];
-			tPUI._progressSlider( progressNode );
 
 			indicator = nodes.indicator = $(indicatorStr)[0];
 			// ??: Should this really be a button? How do the rest of the controls fit into this?
@@ -354,7 +357,14 @@
 			rewindSentence = nodes.rewindSentence = $(rewindSentenceStr)[0];
 
 			var coreNodes = coreUIObj.nodes;
+			
 			$(progressNode).appendTo( coreNodes.above );
+			// Must add it after it belongs ot the right document so nouislider
+			// is listening to the right document
+			// TODO: ??: File issue with nouislider that owner of slider should
+			// always be checked?
+			tPUI._progressSlider( progressNode );
+
 			$(playPauseFeedback).appendTo( coreNodes.barCenter );
 
 			$(indicator).appendTo( coreNodes.textElements );
