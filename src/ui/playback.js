@@ -373,11 +373,10 @@
 			// always be checked?
 			tPUI._progressSlider( progressNode );
 
-			$(playPauseFeedback).appendTo( coreNodes.barCenter );
-
 			$(indicator).appendTo( coreNodes.textElements );
 			$(textButton).appendTo( coreNodes.textElements );
 			$(loading).appendTo( coreNodes.textElements );
+			$(playPauseFeedback).appendTo( coreNodes.textElements );
 			
 			$(controls).appendTo( coreNodes.bar );
 			$(rewindSentence).appendTo( coreNodes.barLeft );

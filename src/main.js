@@ -15,7 +15,8 @@
 			UI: 		require( './ui/core-ui.js' 	)
 		},
 		ui: {
-			PlaybackUI: require( './ui/playback' )
+			PlaybackUI: require( './ui/playback.js' ),
+			SettingsUI: require( './ui/settings/settings-core.js' )
 		}
 	};
 

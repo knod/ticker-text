@@ -1,7 +1,7 @@
 /* iframe.css
 * 
 * Refer to main ui script for DOM structure -
-* src/ui/core-ui.js on 06/18/17
+* src/ui/ui-manager.js on 06/18/17
 * 
 * Affects mostly core ui, but also others.
 */
@@ -25,9 +25,9 @@ html, body {
 	display: flex;
 	flex-direction: column;
 	max-height: 100%;
-	top: 0;
+/*	top: 0;
 	left: 0;
-	width: 100%;
+	width: 100%;*/
 	transition: top 100ms linear;
 }
 
@@ -53,46 +53,58 @@ html, body {
 #__tt #__tt_bar {
 	/* ??: Will this work if font-size is declared lower down? */
 	min-height: 2em;
-	text-align: center;
+	/*text-align: center;*/
 	justify-content: space-between;
+	align-items: center;
+	position: relative;
+}
+
+/* _tt_bar_center most important*/
+#__tt_bar * {
+	position: relative;
 }
 
 /* ??: Generalize positions? Left, right, top, bottom, center, middle? */
-#__tt #__tt_bar_left,
+/*#__tt #__tt_bar_left,
 #__tt #__tt_bar_center,
-#__tt #__tt_bar_right {
+#__tt #__tt_bar_right {*/
 	/* vertically centered without flexbox */
-	position: absolute;
+/*	position: absolute;
 	top: 50%;
 	transform: translateY(-50%);
 	height: 100%;
 	display: flex;
 	align-items: center;
 	align-content: center;
-	justify-content: center;
-}
+	justify-content: center;*/
+/*}*/
 #__tt #__tt_bar_left,
 #__tt #__tt_bar_right {
+	display: flex;
+	/*height: 100%;*/
 	padding: 0.75%;
 }
 #__tt #__tt_bar_left {
-	left: 0;
+	align-items: center;
 }
-#__tt #__tt_bar_center {
+/*#__tt #__tt_bar_center {
 	height: 100%;
 	text-align: center;
-}
-#__tt #__tt_bar_right {
-	right: 0;
-}
+}*/
+/*#__tt #__tt_bar_right {
+	align-items: flex-start;
+}*/
 #__tt #__tt_close {
 	align-self: flex-start;
 }
 
 #__tt #__tt_text_elements {
+	display: flex;
+	align-items: center;
 	/* em counts the widest possible text */
 	width: 13em;
-	height: 100%;
+	/*height: 100%;*/
+	height: 2em;
 }
 
 /* Horizontally and vertically centered without flexbox */
@@ -143,17 +155,17 @@ button img {
 }
 
 .__tt-main-section {
-	border: 0;
+	/*border: 0;*/
 	border-bottom: 1px solid gray;
 }
 
-#__tt #__tt_bar,
+/*#__tt #__tt_bar,
 #__tt #__tt_bar div,
 #__tt #__tt_bar span,
 #__tt #__tt_bar a,
 #__tt #__tt_bar li {
 	font-size: 36px;
-}
+}*/
 
 
 /* Should this be in readerly-main.css? new readerly-ui.css?*/
@@ -183,6 +195,10 @@ button img {
   border-style: inset;
 }
 */
+
+#__tt #__tt_text_elements {
+	font-size: 36px;
+}
 
 
 /* ============================== */

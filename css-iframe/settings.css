@@ -13,8 +13,8 @@
 /* ============================== */
 /* Should this be in iframe.css? */
 #__tt button {
-	position: relative;
-	padding: 0;
+  position: relative;
+  padding: 0;
   /* functional */
   cursor: pointer;
 }
@@ -25,7 +25,7 @@
   /* font defaults from chrome inspection */
   font-family: 'droid', serif;
   font-size: 16px;
-  line-height: normal;
+/*  line-height: normal;
   font-style: normal;
   font-weight: normal;
   font-variant: none;
@@ -33,15 +33,15 @@
   font-feature-settings: normal;
   font-kerning: auto;
   -webkit-font-smoothing: auto;
-  text-transform: none;
+  text-transform: none;*/
 }
 
 #__tt .__tt-big-menu-button {
-	width: 3em;
-	height: 3em;
+  width: 3em;
+  height: 3em;
   /* default followed by desired setting */
   margin: 0;
-	margin-right: .3em;
+  margin-right: .3em;
 }
 
 .__tt-sup-menu-button {
@@ -64,28 +64,28 @@
 #__tt_settings_tabs,
 #__tt_settings_menus,
 .__tt_settings_menu {
-	position: relative;
-	width: 100%;
+  position: relative;
+  width: 100%;
 }
 
 #__tt_settings_tabs {
-	display: flex;
-	justify-content: center;
-	height: auto;
+  display: flex;
+  justify-content: center;
+  height: auto;
   font-size: 1.23em;
-	overflow: hidden;
+  overflow: hidden;
 }
 
 .__tt-settings-tab {
-	flex-grow: 1;
-	padding: 0.1em;
+  flex-grow: 1;
+  padding: 0.1em;
   display: flex;
   justify-content: center;
 }
 
 #__tt_settings_menus {
-	height: auto;
-	text-align: center;
+  height: auto;
+  text-align: center;
 }
 
 #__tt .__tt-settings-menu {
@@ -135,17 +135,17 @@
 }*/
 
 #__tt_settings_container {
-	background-color: rgba( 230, 230, 230, 1);
+  background-color: rgba( 230, 230, 230, 1);
 }
 
 #__tt_settings_tabs {
-	border-bottom: 1px solid gray;
+  border-bottom: 1px solid gray;
 }
 #__tt_settings_tab {
-	border-right: 1px solid gray;
+  border-right: 1px solid gray;
 }
 #__tt_settings_tabs:last-child {
-	border-right: 0;
+  border-right: 0;
 }
 
 

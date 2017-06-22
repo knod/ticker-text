@@ -28,13 +28,14 @@
 
 #__tt_indicator {
 	/* Don't get in the way of text */
-	position: absolute;
-	z-index: -10;
+	/*position: absolute;*/
+	z-index: 0;
 }
 #__tt_text_button {
 	width: 100%;
-	height: 100%;
+	height: 90%;
 	text-align: center;
+	z-index: 10;
 }
 #__tt_loading {
 	/* Can't be centered with transform because transform is used to rotate it */
@@ -84,6 +85,10 @@
 /* ============================== */
 /* SKIN */
 /* ============================== */
+#__tt_text_elements * {
+	font-size: 36px;
+}
+
 #__tt_above_bar {
 	border-bottom: 0;
 }
@@ -114,9 +119,9 @@
     border: none;
     height: 90%;
 
-	font-family: 'droid', serif;
+	/*font-family: 'droid', serif;*/
 	font-size: 36px;
-	line-height: normal;
+/*	line-height: normal;
 	font-style: normal;
 	font-weight: normal;
 	font-variant: none;
@@ -124,12 +129,12 @@
 	font-feature-settings: normal;
 	font-kerning: auto;
 	-webkit-font-smoothing: auto;
-	text-transform: none;
+	text-transform: none;*/
 }
 #__tt_loading {
 	fill: rgba( 150, 150, 150, 1 );
 	/* temp for visibility before icon is chosen */
-	border: 1px solid gray;
+	/*border: 1px solid gray;*/
 }
 
 #__tt_play_feedback, #__tt_pause_feedback {
