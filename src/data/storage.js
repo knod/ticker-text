@@ -31,6 +31,7 @@
 	* 
 	*/
 		var tSto = {};
+		tSto.id = 'storage';
 
 		var browser = browser || chrome;
 

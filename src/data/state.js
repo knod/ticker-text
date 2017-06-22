@@ -1,54 +1,74 @@
 /* state.js
 * 
 * TODO:
+* Pass in already constructed emitter?
+* 
+* NOTES:
+* - When you save a setting it normalizes your value and returns
+* 	it back to you. If you need to use the value, don't use your
+* 	own, use the one that this state object returns.
+* - Things that save settings will have to save both wpm
+* 	and then baseDelay using the wpm value.
 */
+
+'use strict';
 
 (function (root, ttsFactory) {  // root is usually `window`
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
-        define( [], function () { return ( root.TT = ttsFactory() ); });
+        define( [
+        	'./defaults.js',
+	        './delay-normalizer.js',
+	        './stepper-normalizer.js'
+	    ], function ( d, dn, sn ) { return ( root.TT = ttsFactory( d, dn, sn ) ); });
     } else if (typeof module === 'object' && module.exports) {
         // Node. Does not work with strict CommonJS, but only CommonJS-like
         // environments that support module.exports, like Node.
-        module.exports = ttsFactory();
+        module.exports = ttsFactory(
+        	require( './defaults.js' ),
+			require( './delay-normalizer.js' ),
+			require( './stepper-normalizer.js' )
+		);
     } else {
         // Browser globals
         root.TTState = ttsFactory();
     }
-}(this, function () {
+}(this, function ( defaults, delayNormer, stepperNormer ) {
 
-	'use strict';
-
-
-	var TTState = function ( oldSettings, storage, Emitter ) {
+	var TTState = function ( storage, Emitter ) {
 	/* ( {}, {} ) -> TTState
 	* 
 	*/
 
-		var ttst = {
-			id: 'state',
+		var ttSt = {
+			id: 'tickerTextState',
+			debug: false,
 			emitter: new Emitter(),
+			defaults: defaults,
 			stepper: {},
 			delayer: {},
 			playback: {},
+			getters: {
+				delayer: delayNormer,
+				stepper: stepperNormer,
+				playback: {}
+			},
 			isOpen: false,
 			index: 0,  // start at beginning of text
 			parsedText: '',  // Till this is set
 		};
 
-		ttst.id = 'tickerTextState';
-
 
 		// ==== GETTERS AND SETTERS ====
 
-		ttst.get = function ( keyOrKeys, callback ) {
+		ttSt.get = function ( keyOrKeys, callback ) {
 			// TODO: Do the same thing as with loadAll
 			storage.get( keyOrKeys, callback );
-			return ttst;
-		};  // End ttst.get()
+			return ttSt;
+		};  // End ttSt.get()
 
 
-		ttst.set = function ( pathArr, settings, callback ) {
+		ttSt.set = function ( sender, settings, callback ) {
 		// FOR NOW JUST SAVE ONE SETTING AT A TIME
 
 		// Set any number of settings key/value pairs.
@@ -58,25 +78,45 @@
 		// in the right place and a way to build the key for
 		// storing in chrome.
 
-			var keyPrefix = 'tickerText_';
-			var obj = ttst;
-			for ( let parti = 0; parti < pathArr.length; parti++ ) {
+		// TODO: ??: `pathArr` should be `sender` with owners?
 
-				let part 	= pathArr[ parti ];
+			// var keyPrefix = 'tickerText_';
+			// var obj = ttSt;
+			// var val;
+			// for ( let parti = 0; parti < pathArr.length; parti++ ) {
+
+			// 	let part 	= pathArr[ parti ];
+
+			// 	// Is this failing silently, or is it flexibility to
+			// 	// create new settings on the fly?
+			// 	if ( obj[ part ] === undefined ) { obj[ part ] = {}; }
+			// 	obj 		= obj[ part ];
+			// 	keyPrefix 	= keyPrefix + part + '_';
+			// }
+
+			var keyPrefix = 'tickerText_';
+			var obj = ttSt;
+			var val;
+			let older = sender;
+			while ( older ) {
+
+				let id = older.id
 
 				// Is this failing silently, or is it flexibility to
 				// create new settings on the fly?
-				if ( obj[ part ] === undefined ) { obj[ part ] = {}; }
-				obj 		= obj[ part ];
-				keyPrefix 	= keyPrefix + part + '_';
+				if ( obj[ id ] === undefined ) { obj[ id ] = {}; }
+				obj = obj[ id ];
 
+				keyPrefix = keyPrefix + id + '_';
+				older = older.owner;
 			}
 
 			for ( let key in settings ) {
 
 				let fullKey = keyPrefix + key;
+
 				// TODO: Normalize value
-				let val = settings[ key ];
+				val = settings[ key ];
 
 				// ---- save ----
 				// Save in local settings
@@ -85,19 +125,34 @@
 				// instead of the literal word "fullKey")
 				var toSave 			= {};
 				toSave[ fullKey ] 	= val;
+
+				// very awkward, but what to do?
+				if ( key === 'wpm' ) {
+					state.delayer._baseDelay = state.getters.delayer.get_baseDelay( val );
+				}
+
 				// TODO: Problem with callback for multiple settings
 				storage.set( toSave, callback );
 
 			}  // end for( each key )
 
-			return ttst;
-		};  // End ttst.set()
+			return val;
+		};  // End ttSt.set()
 
-		ttst.loadAll = function ( callback ) {
+		// ????
+		ttSt.loadAll = function ( callback ) {
+			// ??: After loading all, set all the settings in here to those settings?
 			storage.loadAll( function setAllSettings( all ) {
 
+				// For ever key that settings has
+					// get the key from storage
+						// if key doesn't exist
+							// set using the default value
+						// otherwise
+							// set using the storage value
+
 				for ( let key in all ) {
-					let obj = ttst;
+					let obj = ttSt;
 					if ( /^tickerText_/.test( key ) ) {
 						let parts = newKey.split( '_' );
 						parts.shift();
@@ -122,8 +177,8 @@
 			});
 
 
-			return ttst;
-		};  // End ttst.loadAll()
+			return ttSt;
+		};  // End ttSt.loadAll()
 
 
 		// TODO: put some defaults up in here
@@ -133,31 +188,43 @@
 		// Doesn't belong here, not sure wher to put it
 		// It's so we can use playback's processing without needing
 		// playback to be present at the top level
-		ttst.process = function ( text ) { return text; };  // default
-
-		ttst.setProcessor = function ( obj ) {
-			ttst.process = obj.process;
-			return ttst;
-		};  // End ttst.setProcessor()
+		ttSt.setProcess = function ( func ) {
+			ttSt.process = func;
+			return ttSt;
+		};  // End ttSt.setProcessor()
 
 
 		// ==== DELAYER ====
 
 		// ==== STEPPER ====
 
+
 		// ==== PLAYBACK ====
-		ttst.playback.transformFragment = function ( frag ) {
+		ttSt.playback.transformFragment = function ( frag ) {
 			// In future skip whitespace sometimes
 			return frag;
-		};  // End ttst.playback.transformFragment()
+		};  // End ttSt.playback.transformFragment()
 
 
-		ttst._init = function () {
-			return ttst;
+		ttSt._init = function () {
+			// FOR DEBUGGING
+			if ( ttSt._debug ) { storage.clear(); }
+
+			// if (!oldTTDefaults) {
+			// 	oldTTDefaults = ttSt.defaults;
+			// 	storage.set( ttSt.defaults, function(val){console.log('TTDefaults saved for first time:', val)} )
+			// }
+
+			// for ( let key in _settings ) {
+			// 	let val = oldTTDefaults[key] || _settings[key];
+			// 	ttSt.set( key, val );
+			// }
+
+			return ttSt;
 		};
 
 		// To be used in a script
-		return ttst;
+		return ttSt;
 	};  // End TTState() -> {}
 
 

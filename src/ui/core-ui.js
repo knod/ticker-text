@@ -1,4 +1,4 @@
-/* ui-manager.js
+/* core-ui.js
 * 
 * Just the TT text display, including areas for
 * future buttons. No settings, etc.
@@ -21,18 +21,18 @@
 (function (root, uiFactory) {  // root is usually `window`
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
-        define( [ 'jquery', '@knod/playback' ], function ( jquery ) { return ( root.TTUI = uiFactory( jquery ) ); });
+        define( [ 'jquery', '@knod/playback' ], function ( jquery ) { return ( root.TTCoreUI = uiFactory( jquery ) ); });
     } else if (typeof module === 'object' && module.exports) {
         // Node. Does not work with strict CommonJS, but only CommonJS-like
         // environments that support module.exports, like Node.
         module.exports = uiFactory( require('jquery') );
     } else {
         // Browser globals
-        root.TTUI = uiFactory( root.jQuery );
+        root.TTCoreUI = uiFactory( root.jQuery );
     }
 }(this, function ( $ ) {
 
-	var TTUI = function ( state, parentNode, constructors, filepaths ) {
+	var TTCoreUI = function ( state, parentNode, constructors, filepaths ) {
 	/*
 	* 
 	* `filepaths` has paths for child modules and iframe filepaths
@@ -40,10 +40,11 @@
 	*/
 		var browser = chrome || browser;
 
-		var ttui = {};
+		var tCui = {};
+		tCui.id = 'coreUI'
 
 		var tickerText, textElems, $iframe;
-		ttui._toTrigger = {};
+		tCui._toTrigger = {};
 
 
 
@@ -78,95 +79,95 @@
 
 		// =========== HOOKS =========== \\
 
-		ttui.addTriggerable = function ( triggerable ) {
-		/* {} -> TTUI */
+		tCui.addTriggerable = function ( triggerable ) {
+		/* {} -> TTCoreUI */
 
-			if ( !ttui._toTrigger[ triggerable.id ] ) {
-				ttui._toTrigger[ triggerable.id ] = triggerable;
+			if ( !tCui._toTrigger[ triggerable.id ] ) {
+				tCui._toTrigger[ triggerable.id ] = triggerable;
 			}
 
-			return ttui;
+			return tCui;
 		};
 
 
 
 		// =========== RUNTIME ACTIONS =========== \\
 
-		ttui.triggerTriggerable = function ( ourFuncName, theirFuncName ) {
-			ttui[ ourFuncName ]();
-			for ( var trigID in ttui._toTrigger ) {
-				let obj = ttui._toTrigger[ trigID ]
+		tCui.triggerTriggerable = function ( ourFuncName, theirFuncName ) {
+			tCui[ ourFuncName ]();
+			for ( var trigID in tCui._toTrigger ) {
+				let obj = tCui._toTrigger[ trigID ]
 				if ( obj[ theirFuncName ] ) obj[ theirFuncName ]();
 			};
-			return ttui;
-		};  // End ttui.triggerTriggerable()
+			return tCui;
+		};  // End tCui.triggerTriggerable()
 
-		ttui.close = function () {
+		tCui.close = function () {
 		// This is where everything gets closed, paused, put away
-			// ttui.hide();
-			// for ( var trigID in ttui._toTrigger ) {
-			// 	let obj = ttui._toTrigger[ trigID ]
+			// tCui.hide();
+			// for ( var trigID in tCui._toTrigger ) {
+			// 	let obj = tCui._toTrigger[ trigID ]
 			// 	if ( obj.close ) obj.close();
 			// };
-			// return ttui;
-			return ttui.triggerTriggerable( 'hide', 'close' );
+			// return tCui;
+			return tCui.triggerTriggerable( 'hide', 'close' );
 		};
 
-		ttui.open = function () {
-			// ttui.show();
-			// for ( var trigID in ttui._toTrigger ) {
-			// 	let obj = ttui._toTrigger[ trigID ]
+		tCui.open = function () {
+			// tCui.show();
+			// for ( var trigID in tCui._toTrigger ) {
+			// 	let obj = tCui._toTrigger[ trigID ]
 			// 	if ( obj.open ) obj.open();
 			// };
-			// return ttui;
-			return ttui.triggerTriggerable( 'show', 'open' );
+			// return tCui;
+			return tCui.triggerTriggerable( 'show', 'open' );
 		};
 
-		ttui.start = function () {
-			// ttui.show();
-			// for ( var trigID in ttui._toTrigger ) {
-			// 	let obj = ttui._toTrigger[ trigID ]
+		tCui.start = function () {
+			// tCui.show();
+			// for ( var trigID in tCui._toTrigger ) {
+			// 	let obj = tCui._toTrigger[ trigID ]
 			// 	if ( obj.play ) obj.play();
 			// };
-			// return ttui;
-			return ttui.triggerTriggerable( 'show', 'play' );
+			// return tCui;
+			return tCui.triggerTriggerable( 'show', 'play' );
 		};
 
-		ttui.play = function () {
-			return ttui.triggerTriggerable( 'show', 'play' );
+		tCui.play = function () {
+			return tCui.triggerTriggerable( 'show', 'play' );
 		}
 
 
-		ttui.show = function () {
+		tCui.show = function () {
 			$iframe.show();
 			$(tickerText).slideDown( 200 );  // can't `.update()` at end
-			return ttui;
+			return tCui;
 		};
 
-		ttui.wait = function () {
-			ttui._toTrigger.playbackUI.wait();
+		tCui.wait = function () {
+			tCui._toTrigger.playbackUI.wait();
 		}
 
-		ttui.hide = function () {
+		tCui.hide = function () {
 			$iframe.hide();
 			$(tickerText).slideUp( 200 );
-			return ttui;
+			return tCui;
 		};
 
-		ttui.destroy = function () {
+		tCui.destroy = function () {
 			$(tickerText).remove();
-			return ttui;
+			return tCui;
 		};
 
 
 		// iframe element sizing
 		// https://jsfiddle.net/fpd4fb80/31/
-		ttui._resizeIframeAndContents = function () {
+		tCui._resizeIframeAndContents = function () {
 			// There should only be one (for now...)
 			var grower = $(tickerText).find('.__tt-to-grow')[0];
 
 			// For when the element isn't made yet or isn't visible
-			if ( !grower ) { return ttui; }
+			if ( !grower ) { return tCui; }
 
 			var scrollable = $(grower).parent()[0],
 				scrollRect = scrollable.getBoundingClientRect();
@@ -217,11 +218,11 @@
 
 			$iframe[0].style.height = currentOuterHeight + 'px';
 
-			return ttui;
-		};  // End ttui._resizeIframeAndContents()
+			return tCui;
+		};  // End tCui._resizeIframeAndContents()
 
 
-		ttui.update = function () {
+		tCui.update = function () {
 		// Callable from outside to have the display resize what it needs it
 
 			// Note on previous bug. Solution was to call function first without a delay
@@ -231,26 +232,26 @@
 			// work until this was called for the second time. Something to do with going
 			// from height: 0 to whatever height
 
-			setTimeout(ttui._resizeIframeAndContents, 4);
+			setTimeout(tCui._resizeIframeAndContents, 4);
 			// Delay probably won't work when there's a lot of lag.
 			// TODO: Wait for an element to appear properly before calling resize
-			return ttui;
+			return tCui;
 		};
 
 
 
 		// =========== INITIALIZE =========== \\
 
-		ttui._addEvents = function () {
-			$(ttui.nodes.close).on( 'touchend click', ttui.close );
-			$(tickerText).on( 'mousedown mouseup touchstart touchend', ttui.update );
-			$(window).on( 'resize', ttui.update );
+		tCui._addEvents = function () {
+			$(tCui.nodes.close).on( 'touchend click', tCui.close );
+			$(tickerText).on( 'mousedown mouseup touchstart touchend', tCui.update );
+			$(window).on( 'resize', tCui.update );
 			// Event for content zooming?
-			return ttui;
+			return tCui;
 		};
 
 
-		ttui._addNodes = function () {
+		tCui._addNodes = function () {
 
 			if (!parentNode) { parentNode = document.body; }
 
@@ -264,7 +265,7 @@
 			// console.log( 'iDoc', iDoc );
 			// console.log( 'iframe', $iframe[0] );
 
-			tickerText = ttui._tickerTextNode = $(contentStr)[0];
+			tickerText = tCui._tickerTextNode = $(contentStr)[0];
 			$(tickerText).appendTo( iDoc.body );
 			// console.log( "in body?:", tickerText );
 
@@ -281,7 +282,7 @@
 			$(styles2).appendTo( iDoc.head );
 
 			// ??: Is this useful?
-			ttui.nodes 	= {
+			tCui.nodes 	= {
 				doc: 			iDoc,
 				head: 			iDoc.head,
 				body: 			iDoc.body,
@@ -300,14 +301,14 @@
 				below: 			$(tickerText).find('#__tt_below_bar')[0]
 			}
 
-			return ttui;
-		};  // End ttui._addNodes()
+			return tCui;
+		};  // End tCui._addNodes()
 
 
-		ttui._init = function () {
+		tCui._init = function () {
 
 			$('#__tt_iframe').remove();
-			ttui._addNodes()
+			tCui._addNodes()
 				._addEvents()
 				// // This is in the wrong place
 				// // Reconfig needed. This should construct state?
@@ -316,28 +317,28 @@
 
 			for ( let key in constructors ) {
 				let Constr = constructors[ key ];
-				new Constr( state, ttui, filepaths );
+				new Constr( state, tCui, filepaths );
 			}
 
 			// This should not be visible until it's .show()n
 			$iframe.hide();
-			// $(tickerText).hide( 0, ttui.update )  // breaks things?
+			// $(tickerText).hide( 0, tCui.update )  // breaks things?
 			$('#__tt_iframe').hide(0);
 
-			return ttui;
+			return tCui;
 		};
 
 
 		// =========== ADD NODE, ETC. =========== \\
 		// Don't show at start, only when prompted
-		ttui._init();
+		tCui._init();
 
 		// To be called in a script
-		return ttui;
-	};  // End TTUI() -> {}
+		return tCui;
+	};  // End TTCoreUI() -> {}
 
 	// To put on the window object, or export into a module
-    return TTUI;
+    return TTCoreUI;
 }));
 
 

@@ -30,6 +30,7 @@
 	*/
 
 		var ttxt = {};
+		ttxt.id = 'tickerText';
 
 		ttxt.storage, ttxt.state, ttxt.ui;
 
@@ -37,15 +38,16 @@
 
 			var top = constructors.topLevel;
 
-			ttxt.state 	= new top.State( oldSettings, ttxt.storage, top.Emitter );
-			ttxt.parser = new top.Parser();
-			ttxt.ui 	= new top.UI( ttxt.state, document.body, constructors.ui, filepaths.ui );
-
+			ttxt.state 			= new top.State( ttxt.storage, top.Emitter );
+			ttxt.state.owner 	= ttxt;
+			ttxt.parser 		= new top.Parser();
+			ttxt.parser.owner 	= ttxt;
+			ttxt.ui 			= new top.UI( ttxt.state, document.body, constructors.ui, filepaths.ui );
+			ttxt.ui.owner 		= ttxt;
 
 			// TEMP (For less annoying dev for now)
 			ttxt.processFullPage();
 			ttxt.readFullPage();
-
 
 		};  // End ttxt._afterLoad()
 
@@ -57,6 +59,9 @@
 			ttxt.storage = new top.Storage();
 			ttxt.storage.loadAll( ttxt._afterLoad );
 
+			// // TODO:
+			// ttxt.state 	= new top.State( ttxt.storage, top.Emitter );
+			// ttxt.state.loadAll( ttxt._afterLoad );
 
 			return ttxt;
 		};  // End ttxt._init

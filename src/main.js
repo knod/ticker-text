@@ -12,7 +12,7 @@
 			Emitter: 	require( 'wolfy87-eventemitter' ),
 			State: 		require( './data/state.js' 		),
 			Parser: 	require( './parse/parser.js' 	),
-			UI: 		require( './ui/ui-manager.js' 	)
+			UI: 		require( './ui/core-ui.js' 	)
 		},
 		ui: {
 			PlaybackUI: require( './ui/playback' )

@@ -16,18 +16,18 @@
 (function (root, ttpFactory) {  // root is usually `window`
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
-        define( [ 'jquery', '@knod/playback' ], function ( jquery, playback ) {
+        define( [ 'jquery', '@knod/playback', 'nouislider' ], function ( jquery, playback ) {
         	return ( root.TT = ttpFactory( jquery , playback ) );
         });
     } else if (typeof module === 'object' && module.exports) {
         // Node. Does not work with strict CommonJS, but only CommonJS-like
         // environments that support module.exports, like Node.
-        module.exports = ttpFactory( require('jquery'), require('@knod/playback') );
+        module.exports = ttpFactory( require('jquery'), require('@knod/playback'), 'nouislider' );
     } else {
         // Browser globals
         root.TTPlaybackUI = ttpFactory( root.jQuery, root.Playback );
     }
-}(this, function ( $, PlaybackControl ) {
+}(this, function ( $, Player, noUiSlider ) {
 
 	'use strict';
 
@@ -91,7 +91,7 @@
 		};
 		tPUI.open = function () {
 			tPUI.isOpen = true;
-			tPUI.controller.current();  // show current fragment
+			tPUI.player.current();  // show current fragment
 			$(playPauseFeedback).hide();
 			return tPUI;
 		};
@@ -149,13 +149,13 @@
 		};
 
 		tPUI._togglePlayPause = function () {
-			tPUI.controller.toggle();
+			tPUI.player.toggle();
 			return tPUI;
 		};
 
 
 		tPUI._rewindSentence = function () {
-			tPUI.controller.prevSentence();
+			tPUI.player.prevSentence();
 			return tPUI;
 		};
 
@@ -188,7 +188,7 @@
 
 		tPUI._start = function () {
 			// progressNode.noUiSlider.updateOptions({
-			// 	range: { min: 0, max: ( tPUI.controller.getLength() - 1 ) }
+			// 	range: { min: 0, max: ( tPUI.player.getLength() - 1 ) }
 			// });
 			return tPUI;
 		}
@@ -202,14 +202,14 @@
 
 
 		tPUI._updateScrubbedWords = function ( values, handle ) {
-			// tPUI.controller.jumpTo( parseInt( values[ handle ] ) );
+			// tPUI.player.jumpTo( parseInt( values[ handle ] ) );
 			return tPUI;
 		};  // End tPUI._updateScrubbedWords()
 
 
 		tPUI._stopScrubbing = function ( values, handle ) {
 			// tPUI.isScrubbing = false;
-			// // tPUI.controller.disengageJumpTo();
+			// // tPUI.player.disengageJumpTo();
 			return tPUI;
 		};  // End tPUI._stopScrubbing()
 
@@ -248,11 +248,11 @@
 			}
 
 			if ( tPUI.modifierKeysDown.indexOf( smod ) > -1 ) {
-				if ( keyCode === 39 ) { tPUI.controller.nextSentence(); }
-				else if ( keyCode === 37 ) { tPUI.controller.prevSentence(); }
+				if ( keyCode === 39 ) { tPUI.player.nextSentence(); }
+				else if ( keyCode === 37 ) { tPUI.player.prevSentence(); }
 			} else {
-				if ( keyCode === 39 ) { tPUI.controller.nextWord(); }
-				else if ( keyCode === 37 ) { tPUI.controller.prevWord(); }
+				if ( keyCode === 39 ) { tPUI.player.nextWord(); }
+				else if ( keyCode === 37 ) { tPUI.player.prevWord(); }
 			}
 
 			return tPUI;
@@ -282,7 +282,7 @@
 		};  // End tPUI._progressSlider()
 
 
-		tPUI._addEvents = function ( coreUIObj ) {
+		tPUI._addEvents = function () {
 			// Timer events
 			state.emitter.on( 'playBegin', tPUI.play );
 			state.emitter.on( 'pauseFinish', tPUI.pause );
@@ -310,10 +310,20 @@
 		};  // End tPUI._addEvents()
 
 
-		tPUI._init = function ( coreUIObj ) {
+		tPUI._init = function () {
 
-			tPUI.controller = new PlaybackControl( state );
-			state.setProcessor( tPUI.controller );
+			tPUI.player 	= new Player( state );
+			// They don't have their own and it doesn't quite make
+			// sense to add that there, so we have to do it here.
+			tPUI.player.id 	= 'playback';
+			// no `tPUI.player.owner` - state needs this as top-most level
+			tPUI.player._stepper.id 	= 'stepper';
+			tPUI.player._stepper.owner 	= tPUI.player;
+			tPUI.player._delayer.id 	= 'delayer';
+			tPUI.player._delayer.owner 	= tPUI.player;
+
+			state.setProcess( tPUI.player.process );
+
 
 			tPUI.modifierKeysDown = [];  // TODO: Empty non-destructively
 			tPUI.sentenceModifierKey = 18;  // 'alt' TODO: Modifiable?
@@ -357,7 +367,7 @@
 
 			coreUIObj.addTriggerable( tPUI );
 
-			tPUI._addEvents( coreUIObj );
+			tPUI._addEvents();
 
 			return tPUI;
 		};  // End tPUI._init()
@@ -365,7 +375,7 @@
 
 		// =========== ADD NODE, ETC. =========== \\
 		// Don't show at start, only when prompted
-		tPUI._init( coreUIObj );
+		tPUI._init();
 
 		// To be called in a script
 		return tPUI;

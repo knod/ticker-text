@@ -33,6 +33,7 @@
     * Builds the options needed for the parser
     */
     	var tPar = {};
+    	tPar.id  = 'parser';
 
     	tPar.debug 		= false;
     	tPar.parsedText = null;
