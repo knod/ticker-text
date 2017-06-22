@@ -16,16 +16,16 @@
 (function (root, ttpFactory) {  // root is usually `window`
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
-        define( [ 'jquery', '@knod/playback', 'nouislider' ], function ( jquery, playback ) {
-        	return ( root.TT = ttpFactory( jquery , playback ) );
+        define( [ 'jquery', '@knod/playback', 'nouislider' ], function ( jquery, playback, noUi ) {
+        	return ( root.TT = ttpFactory( jquery , playback, noUi ) );
         });
     } else if (typeof module === 'object' && module.exports) {
         // Node. Does not work with strict CommonJS, but only CommonJS-like
         // environments that support module.exports, like Node.
-        module.exports = ttpFactory( require('jquery'), require('@knod/playback'), 'nouislider' );
+        module.exports = ttpFactory( require('jquery'), require('@knod/playback'), require( '@knod/nouislider' ) );
     } else {
         // Browser globals
-        root.TTPlaybackUI = ttpFactory( root.jQuery, root.Playback );
+        root.TTPlaybackUI = ttpFactory( root.jQuery, root.Playback, root.noUiSlider );
     }
 }(this, function ( $, Player, noUiSlider ) {
 
@@ -133,6 +133,13 @@
 
 		// ----- DOM EVENTS ----- \\
 		tPUI.play = function () {
+
+			// For scrubber bar when something new is processed
+			// TODO: ??: Give `player` a 'processBegin' and 'processFinish'?
+			if ( tPUI.player.getIndex() === 0 ) {
+				 tPUI._setInitialValues();
+			}
+
 			$(playFeedback).removeClass('__tt-hidden');
 			$(pauseFeedback).addClass('__tt-hidden');
 			// https://jsfiddle.net/aL7kxe78/3/ fadeOut (ends with display: none)
@@ -163,10 +170,10 @@
 		// ----- TIMER EVENTS ----- \\
 		var whiteSpaceRegexp = /[\n\r\s]/;
 		var paragraphSymbol  = '';
-		tPUI._showNewFragment = function ( evnt, control, fragment ) {
+		tPUI._showNewFragment = function ( evnt, player, fragment ) {
 			var chars = fragment;
 			// Adds pauses for line breaks
-			// TOOD: Deal with line breaks in control instead? Or state?
+			// TOOD: Deal with line breaks in player instead? Or state?
 			if ( !whiteSpaceRegexp.test(chars) ) {
 				$(textButton).html( chars );
 			} else {
@@ -177,19 +184,19 @@
 		};
 
 
-		tPUI._showProgress = function ( evnt, control, fraction ) {
+		tPUI._showProgress = function ( evnt, player, fraction ) {
 		// TODO: Needs some work
-			// if ( !tPUI.isScrubbing ) {  // Don't mess timing up with transitions
-			// 	progressNode.noUiSlider.set( control.getIndex() );  // version 8 nouislider
-			// }
+			if ( !tPUI.isScrubbing ) {  // Don't mess timing up with transitions
+				progressNode.noUiSlider.set( player.getIndex() );  // version 8 nouislider
+			}
 			return tPUI;
 		};
 
 
-		tPUI._start = function () {
-			// progressNode.noUiSlider.updateOptions({
-			// 	range: { min: 0, max: ( tPUI.player.getLength() - 1 ) }
-			// });
+		tPUI._setInitialValues = function () {
+			progressNode.noUiSlider.updateOptions({
+				range: { min: 0, max: ( tPUI.player.getLength() - 1 ) }
+			});
 			return tPUI;
 		}
 
@@ -202,13 +209,13 @@
 
 
 		tPUI._updateScrubbedWords = function ( values, handle ) {
-			// tPUI.player.jumpTo( parseInt( values[ handle ] ) );
+			tPUI.player.jumpTo( parseInt( values[ handle ] ) );
 			return tPUI;
 		};  // End tPUI._updateScrubbedWords()
 
 
 		tPUI._stopScrubbing = function ( values, handle ) {
-			// tPUI.isScrubbing = false;
+			tPUI.isScrubbing = false;
 			// // tPUI.player.disengageJumpTo();
 			return tPUI;
 		};  // End tPUI._stopScrubbing()
@@ -266,19 +273,19 @@
 		* 
 		* Turn the given data into one noUiSlider slider
 		*/
-			// // To keep handles within the bar
-			// $(progNode).addClass('noUi-extended');
+			// To keep handles within the bar
+			$(progNode).addClass('noUi-extended');
 
-			// var slider = noUiSlider.create( progNode, {
-			// 	range: { min: 0, max: 1 },
-			// 	start: 0,
-			// 	step: 1,
-			// 	connect: [true, false],
-			// 	handles: 1,
-			// 	behaviour: 'tap'
-			// });
+			var slider = noUiSlider.create( progNode, {
+				range: { min: 0, max: 1 },
+				start: 0,
+				step: 1,
+				connect: [true, false],
+				handles: 1,
+				behaviour: 'tap'
+			});
 
-			// return progNode;
+			return progNode;
 		};  // End tPUI._progressSlider()
 
 
@@ -286,14 +293,14 @@
 			// Timer events
 			state.emitter.on( 'playBegin', tPUI.play );
 			state.emitter.on( 'pauseFinish', tPUI.pause );
-			state.emitter.on( 'startFinish', tPUI._start );
+			// state.emitter.on( 'startFinish', tPUI._start );
 			state.emitter.on( 'newWordFragment', tPUI._showNewFragment );
-			// state.emitter.on( 'progress', tPUI._showProgress );
+			state.emitter.on( 'progress', tPUI._showProgress );
 
 			// // Scrubber events
-			// progressNode.noUiSlider.on( 'start', tPUI._startScrubbing );
-			// progressNode.noUiSlider.on( 'slide', tPUI._updateScrubbedWords );
-			// progressNode.noUiSlider.on( 'change', tPUI._stopScrubbing );
+			progressNode.noUiSlider.on( 'start', tPUI._startScrubbing );
+			progressNode.noUiSlider.on( 'slide', tPUI._updateScrubbedWords );
+			progressNode.noUiSlider.on( 'change', tPUI._stopScrubbing );
 
 			// DOM events
 			$(textButton).on( 'touchend click', tPUI._togglePlayPause );
@@ -328,8 +335,8 @@
 			tPUI.modifierKeysDown = [];  // TODO: Empty non-destructively
 			tPUI.sentenceModifierKey = 18;  // 'alt' TODO: Modifiable?
 
-			// progressNode = nodes.progressNode = $(progStr)[0];
-			// tPUI._progressSlider( progressNode );
+			progressNode = nodes.progressNode = $(progStr)[0];
+			tPUI._progressSlider( progressNode );
 
 			indicator = nodes.indicator = $(indicatorStr)[0];
 			// ??: Should this really be a button? How do the rest of the controls fit into this?
@@ -347,7 +354,7 @@
 			rewindSentence = nodes.rewindSentence = $(rewindSentenceStr)[0];
 
 			var coreNodes = coreUIObj.nodes;
-			// $(progressNode).appendTo( coreNodes.above );
+			$(progressNode).appendTo( coreNodes.above );
 			$(playPauseFeedback).appendTo( coreNodes.barCenter );
 
 			$(indicator).appendTo( coreNodes.textElements );

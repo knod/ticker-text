@@ -21,9 +21,10 @@
 
 	var filepaths = {
 		ui: {
-			core: 		'css/iframe.css',
-			playback: 	'css/playback.css',
-			settings: 	'css/settings.css'
+			core: 		'css-iframe/iframe.css',
+			playback: 	'css-iframe/playback.css',
+			settings: 	'css-iframe/settings.css',
+			noui: 		'css-iframe/noUI.css'
 		}
 	};
 

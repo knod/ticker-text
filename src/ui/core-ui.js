@@ -269,17 +269,26 @@
 			$(tickerText).appendTo( iDoc.body );
 			// console.log( "in body?:", tickerText );
 
+			// Styles that affect multiple levels of stuff
 			var styles1 	= iDoc.createElement("link");
 			styles1.href 	= browser.runtime.getURL( filepaths.core );
 			styles1.type 	= "text/css";
 			styles1.rel 	= "stylesheet";
 			$(styles1).appendTo( iDoc.head );
 
+			// This should only affect settings, but atm there's stuff that
+			// affects playback buttons, etc.
 			var styles2 	= iDoc.createElement("link");
 			styles2.href 	= browser.runtime.getURL( filepaths.settings );
 			styles2.type 	= "text/css";
 			styles2.rel 	= "stylesheet";
 			$(styles2).appendTo( iDoc.head );
+
+			var stylesSliders 	= iDoc.createElement("link");
+			stylesSliders.href 	= browser.runtime.getURL( filepaths.noui );
+			stylesSliders.type 	= "text/css";
+			stylesSliders.rel 	= "stylesheet";
+			$(stylesSliders).appendTo( iDoc.head );
 
 			// ??: Is this useful?
 			tCui.nodes 	= {

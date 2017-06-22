@@ -32,6 +32,8 @@
 		var ttxt = {};
 		ttxt.id = 'tickerText';
 
+		var startingNew = true;
+
 		ttxt.storage, ttxt.state, ttxt.ui;
 
 		ttxt._afterLoad = function ( oldSettings ) {
@@ -97,6 +99,8 @@
 			ttxt.state.emitter.trigger( 'playTT', [ ttxt, ttxt.state ] );
 			ttxt.ui.play();
 
+			startingNew = false;
+
 			return ttxt;
 		};
 
@@ -107,6 +111,8 @@
 			if ( ttxt.parser.debug ) {  // Help non-coder devs identify some bugs
 				console.log('~~~~~parse debug~~~~~ If any of those tests failed, the problem isn\'t with Ticker Text, it\'s with one of the other libraries. That problem will have to be fixed later.');
 			}
+
+			startingNew = true;
 
 			return ttxt.state.process( sentenceWords );
 		};
