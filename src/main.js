@@ -3,6 +3,8 @@
 
 (function(){
 
+	// TODO: Fix playback repo to use state.settings instead
+
 	// console.log('__dirname:', __dirname);
 
 	var constructors = {
@@ -16,7 +18,10 @@
 		},
 		ui: {
 			PlaybackUI: require( './ui/playback.js' ),
-			SettingsUI: require( './ui/settings/settings-core.js' )
+			SettingsUI: require( './ui/settings/settings-core.js' ),
+			settings: {
+				Delays: require( './ui/settings/delays.js' )
+			}
 		}
 	};
 

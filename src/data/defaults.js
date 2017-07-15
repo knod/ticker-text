@@ -19,8 +19,7 @@
 	// var TTDefaults = function () {
 
 		var tDef = {
-			id: 'defaults',
-			delays: {
+			delayer: {
 				// ==== word delays ====
 				wpm: 			250,
 				_baseDelay: 	1/(250/60)*1000,  // based on wpm
@@ -40,6 +39,12 @@
 			stepper: {
 				// ==== fragmentor/splitter ====
 				maxNumCharacters: 10
+			},
+			playback: {
+				transformFragment: function ( frag ) {
+					// In future skip whitespace sometimes
+					return frag;
+				}
 			}
 		};
 

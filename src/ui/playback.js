@@ -11,6 +11,7 @@
 * 	default `player` shouldn't fire playBegin, etc. if already
 * 	playing, etc?
 * - ??: How to prevent double triggering on spacebar down then up?
+* - Save progress in state or something
 * - click on 'timer' pauses, lift off plays if was playing
 */
 
@@ -35,7 +36,7 @@
 
 	'use strict';
 
-	var PlaybackUI = function ( state, coreUIObj, filepaths ) {
+	var PlaybackUI = function ( state, coreUIObj, constructors, filepaths ) {
 	/* ( {}, {} ) -> PlaybackUI
 	* 
 	* 

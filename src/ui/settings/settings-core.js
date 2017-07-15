@@ -26,17 +26,18 @@
 }(this, function ( $ ) {
 
 	"use strict";
-
-	var TTSettingsCore = function ( state, coreUI, filepaths ) {
+ 
+	var TTSettingsCore = function ( state, coreUI, uiConstructors, filepaths ) {
 
 		var tSet = {};
+		tSet.id  = 'settingsCore';
 
 		tSet.settings = {};
 
-		tSet.nodes 				= {};
-		tSet.menuNodes 			= {};
+		tSet.nodes 		= {};
+		tSet.menuNodes 	= {};
 
-		tSet._isOpen 			= false;
+		tSet._isOpen 	= false;
 
 		var opener, container, menus, tabs;
 
@@ -85,6 +86,7 @@
 			return tSet;
 		};
 
+		// Not used or tested yet
 		tSet.destroyMenu = function ( evnt ) {
 			var id = evnt.target.id;  // Not a jQuery element
 
@@ -203,6 +205,12 @@
 				._addEvents();
 
 			coreUI.addTriggerable( tSet );
+
+			var constructors = uiConstructors.settings;
+			for ( var key in constructors ) {
+				let Constr = constructors[ key ];
+				new Constr( state, tSet, constructors, filepaths );
+			}
 
 			return tSet;
 		};

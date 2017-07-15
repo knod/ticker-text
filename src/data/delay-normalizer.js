@@ -41,28 +41,28 @@
 			return delN.calcBaseDelay( wpm );  // to milliseconds
 		};
 		delN.get_wpm = function ( val ) {
-			return math.constrainInt( val, 1, 5000 );
+			return math.constrainFloat( val, 1, 5000 );
 		};
 		delN.get_slowStartDelay = function ( val ) {
-			return math.constrainInt( val, 0, 10 );
+			return math.constrainFloat( val, 0, 10 );
 		};
 		delN.get_sentenceDelay = function ( val ) {
-			return math.constrainInt( val, 1, 10 );
+			return math.constrainFloat( val, 1, 10 );
 		};
 		delN.get_otherPuncDelay = function ( val ) {
-			return math.constrainInt( val, 1, 10 );
+			return math.constrainFloat( val, 1, 10 );
 		};
 		delN.get_numericDelay = function ( val ) {
-			return math.constrainInt( val, 1, 10 );
+			return math.constrainFloat( val, 1, 10 );
 		};
 		delN.get_shortWordDelay = function ( val ) {
-			return math.constrainInt( val, 1, 10 );
+			return math.constrainFloat( val, 1, 10 );
 		};
 		delN.get_longWordDelay = function ( val ) {
-			return math.constrainInt( val, 1, 10 );
+			return math.constrainFloat( val, 1, 10 );
 		};
 		// delN.get_wordLengthDelays = function ( val ) {
-		// 	return math.constrainInt( val, 1, 10 );
+		// 	return math.constrainFloat( val, 1, 10 );
 		// };
 
 		// To put on the window object, or export into a module and

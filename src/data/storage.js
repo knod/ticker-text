@@ -37,8 +37,9 @@
 
 
 		tSto.get = function ( keyOrKeys, callback ) {
+			callback = callback || function(){};
 			browser.storage.sync.get( keyOrKeys, function loadOldTTSettings( settings ) {
-				callback( settings );
+				callback( arguments );
 			});
 		};  // End tSto.get()
 
@@ -48,6 +49,7 @@
 		// It's an extension, so objects are valid values, but they
 		// can only be one deep as far as I can tell.
 			// Docs say no args returned
+			callback = callback || function(){};
 			browser.storage.sync.set( settings, callback );
 		};  // End tSto.set()
 
@@ -55,13 +57,15 @@
 
 
 		tSto.loadAll = function ( callback ) {
+			callback = callback || function(){};
 			browser.storage.sync.get( null, function loadAllOldTTSettings( settings ) {
-				callback( settings );
+				callback( arguments );
 			});
 		};  // End tSto.loadAll()
 
 
 		tSto.cleanSave = function ( settings, callback ) {
+			callback = callback || function(){};
 			browser.storage.sync.clear( function clearTTSettings() {
 				// Docs say no args returned
 				browser.storage.sync.set( settings, callback );
@@ -71,12 +75,14 @@
 
 		tSto.clear = function ( callback ) {
 			// Docs say no args returned
+			callback = callback || function(){};
 			browser.storage.sync.clear( callback );
 		};  // End tSto.clear()
 
 
 		tSto.remove = function ( keyOrKeys, callback ) {
 			// Docs say no args returned
+			callback = callback || function(){};
 			browser.storage.sync.remove( keyOrKeys, callback );
 		};  // End tSto.remove()
 

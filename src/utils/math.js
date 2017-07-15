@@ -23,7 +23,7 @@
 		return Math.min( max, minLimited );
 	};
 
-	uMat.constrainInt = function ( val, min, max ) {
+	uMat.constrainFloat = function ( val, min, max ) {
 		var num = parseFloat(val);
 		return uMat.constrain( num, min, max );
 	};

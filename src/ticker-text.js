@@ -40,7 +40,7 @@
 
 			var top = constructors.topLevel;
 
-			ttxt.state 			= new top.State( ttxt.storage, top.Emitter );
+			// ttxt.state 			= new top.State( ttxt.storage, top.Emitter );
 			ttxt.state.owner 	= ttxt;
 			ttxt.parser 		= new top.Parser();
 			ttxt.parser.owner 	= ttxt;
@@ -59,11 +59,11 @@
 			var top = constructors.topLevel;
 
 			ttxt.storage = new top.Storage();
-			ttxt.storage.loadAll( ttxt._afterLoad );
+			// ttxt.storage.loadAll( ttxt._afterLoad );
 
-			// // TODO:
-			// ttxt.state 	= new top.State( ttxt.storage, top.Emitter );
-			// ttxt.state.loadAll( ttxt._afterLoad );
+			// TODO:
+			ttxt.state = new top.State( ttxt.storage, top.Emitter, true );
+			ttxt.state.loadAll( ttxt._afterLoad );
 
 			return ttxt;
 		};  // End ttxt._init
@@ -135,7 +135,7 @@
 			// // First time opens, when open, starts reading (customizable so can start right away?)
 			// if ( !ttxt.state.isOpen ) { ttxt.ui.open(); }
 			// else { ttxt.read( $clone[0] ); }
-// debugger;
+
 			return ttxt.process( $clone[0] );
 		};
 

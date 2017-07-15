@@ -326,7 +326,9 @@
 
 			for ( let key in constructors ) {
 				let Constr = constructors[ key ];
-				new Constr( state, tCui, filepaths );
+				if ( typeof Constr === 'function' ) {
+					new Constr( state, tCui, constructors, filepaths );
+				}
 			}
 
 			// This should not be visible until it's .show()n
