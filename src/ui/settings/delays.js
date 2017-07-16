@@ -113,9 +113,8 @@
 		tDls._makeSliders = function () {
 
 			var slider 	= tDls._oneSlider,
-				nodes 	= tDls._nodes;//,
-				// setts 	= state._settings;
-			var setts 	= state.settings.delayer;
+				nodes 	= tDls._nodes,
+				setts 	= state.delayer;
 
 			slider({
 				sliderNode: nodes.wpmSlider,

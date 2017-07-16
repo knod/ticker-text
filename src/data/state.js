@@ -3,6 +3,8 @@
 * TODO:
 * - Pass in already constructed emitter?
 * - Flatten storage structure?
+* - Should user configs be in a particular runtime place (this
+* 	would be in addition to being in local storage)
 * 
 * NOTES:
 * - When you save a setting it normalizes your value and returns
@@ -48,7 +50,8 @@
 			_debug: debug || false,
 			emitter: new Emitter(),
 			defaults: defaults,
-			settings: defaults, // { stepper: {}, delayer: {}, playback: {} }
+			// settings: {}, // { stepper: {}, delayer: {}, playback: {} }
+			stepper: {}, delayer: {}, playback: {},
 			// getters: {
 			// 	delays: delayNormer,  // ui settings name
 			// 	stepper: stepperNormer,
@@ -58,8 +61,6 @@
 			index: 0,  // start at beginning of text
 			parsedText: '',  // Till this is set
 		};
-
-		var settings = ttSt.settings;
 
 
 		// ==== HELPERS ====
@@ -100,7 +101,7 @@
 			// and may mix things up
 			// TODO: ??: _only_ use callback, matching up with `.loadAll()` and others?
 			// storage.get( keyOrKeys, callback );
-			var val = ttSt.settings[ sender.id ][ key ];
+			var val = ttSt[ sender.id ][ key ];
 
 			return val;
 		};  // End ttSt.get()
@@ -108,12 +109,12 @@
 
 		// `sender` won't work - the UI is the sender, not the original state object
 		ttSt.set = function ( sender, toSet, callback ) {
-		// `.settings` contains one level deep objects only
+		// Objects with 'settable' values only go one level deep
 
 			// TODO: ??: Update `_baseDelay` each time? Have ones that need updating each time?
 			// ??: Recalculate in delayer itself? (probably a better idea - whenever accessing base delay)
 
-			var stateObj = settings[ sender.id ];
+			var stateObj = ttSt[ sender.id ];
 
 			for ( let key in toSet ) {
 				let val = toSet[ key ];
@@ -127,10 +128,10 @@
 				obj[ localKey ] = val;
 				// ??: Don't use callback from browser storage?
 				storage.set( obj );
-				storage.loadAll(function(all){console.log(all)})
 			}  // end for everything that needs saving
 
 			// Give results right away
+			// Gives relevant state values
 			if ( callback ) { callback( stateObj ); }
 
 			return stateObj;
@@ -288,16 +289,29 @@
 						// Save in local storage
 
 				// and/or
-				// Start with defaults
-				// For every key in local storage
-					// if it starts with 'tickerText_'
-						// Use the string to set the current state value
+				// Start with cloning defaults
+				var defs = ttSt.defaults;
+				for ( let catKey in defs ) {
 
+					let stateObj = ttSt[ catKey ];
+					let category = defs[ catKey ];
+
+					for ( let prop in category ) {
+						stateObj[ prop ] = category[ prop ];
+					}  // end for ( every category property )
+				}  // end for ( every default category )
+
+
+				// Then override with local storage where needed
+				// For every key in local storage
 				for ( let key in all ) {
 
 					console.log( 'testing key:', key, key.indexOf( ttSt.keyPrefix ) );
 
+					// if it starts with 'tickerText_'
 					if ( key.indexOf( ttSt.keyPrefix ) !== -1 ) {
+
+						// Use the string to set the current state value
 						// TODO: ??: Need to change from key to floats, etc?
 						let val = all[ key ];
 						console.log( 'value from loading:', key + ':', val)
@@ -306,22 +320,17 @@
 						// that have been taken care of when setting?
 						objAndProp.parentObject[ objAndProp.propertyName ] = val;
 					}
-				}
+				}  // end for ( all browser-stored settings )
 
-				console.log( 'settings after loading all:', ttSt.settings );
-
+				// console.log( 'settings after loading all:', ttSt );
 				// TODO: ??: Set defaults in local storage? Needed?
 
-				callback( ttSt.settings );
+				callback( ttSt );
 			});
 
 
 			return ttSt;
 		};  // End ttSt.loadAll()
-
-
-		// TEMP for dev
-		ttSt.clear = storage.clear;
 
 
 		// ==== STATE ====
@@ -362,4 +371,3 @@
 	// To put on the window object, or export into a module
     return TTState;
 }));
-
