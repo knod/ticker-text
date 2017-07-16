@@ -206,14 +206,15 @@
 			return tDls;
 		};  // End tDls._assignSettingItems()
 
+
 		tDls._oneSetting = function ( idName, label ) {
 			// Should the very specific classes be ids?
-			return $('<div id="__rdly_' + idName + '_setting" class="__rdly-setting">\
-						<label class="__rdly-slider-label">' + label + '</label>\
-						<div class="__rdly-slider-controls">\
-							<input id="__rdly_' + idName + '_input" class="__rdly-slider-input" type="text"/>\
-							<div id="__rdly_' + idName + '_slider" class="__rdly-slider"></div>\
-						</div>\
+			return $('<div id="__rdly_' + idName + '_setting" class="__rdly-setting">\n\
+						<label class="__rdly-slider-label">' + label + '</label>\n\
+						<div class="__rdly-slider-controls">\n\
+							<input id="__rdly_' + idName + '_input" class="__rdly-slider-input" type="text"/>\n\
+							<div id="__rdly_' + idName + '_slider" class="__rdly-slider"></div>\n\
+						</div>\n\
 					</div>')
 		};  // End tDls._oneSetting()
 
@@ -241,16 +242,11 @@
 		};  // End tDls._addNodes()
 
 
-		// =========== DELAY NORMALIZERS =========== \\
-
-
-
-
 		tDls._init = function ( coreSettings ) {
 
-			tDls._addNodes( coreSettings );
-			tDls._assignSettingItems();
-			tDls._makeSliders();
+			tDls._addNodes( coreSettings )
+				._assignSettingItems()
+				._makeSliders();
 
 			// Events assigned with noUiSlider creation
 

@@ -63,6 +63,7 @@
 		};
 
 
+
 		// ==== HELPERS ====
 
 		ttSt.buildKey = function ( sender, key ) {
@@ -86,7 +87,6 @@
 
 			return { parentObject: obj, propertyName: path[ path.length - 1 ] };
 		};  // End ttSt.objectFromKey()
-
 
 
 
@@ -138,158 +138,12 @@
 		};  // End ttSt.set()
 
 
-		// // `sender` won't work - the UI is the sender, not the original state object
-		// ttSt.set = function ( sender, settings, callback ) {
-		// // FOR NOW JUST SAVE ONE SETTING AT A TIME
-
-		// // Set any number of settings key/value pairs.
-		// // It's an extension, so objects are valid values, but they
-		// // can only be one deep as far as I can tell.
-		// // `pathArr` is the way to dig into state to put the setting
-		// // in the right place and a way to build the key for
-		// // storing in chrome.
-
-		// // TODO: ??: `pathArr` should be `sender` with owners?
-
-		// 	// var keyPrefix = 'tickerText_';
-		// 	// var obj = ttSt;
-		// 	// var val;
-		// 	// for ( let parti = 0; parti < pathArr.length; parti++ ) {
-
-		// 	// 	let part 	= pathArr[ parti ];
-
-		// 	// 	// Is this failing silently, or is it flexibility to
-		// 	// 	// create new settings on the fly?
-		// 	// 	if ( obj[ part ] === undefined ) { obj[ part ] = {}; }
-		// 	// 	obj 		= obj[ part ];
-		// 	// 	keyPrefix 	= keyPrefix + part + '_';
-		// 	// }
-
-		// 	var keyPrefix = 'tickerText_';
-		// 	var obj = ttSt;
-		// 	var val;
-		// 	let older = sender;
-		// 	while ( older ) {
-
-		// 		let id = older.id
-
-		// 		// Is this failing silently, or is it flexibility to
-		// 		// create new settings on the fly?
-		// 		if ( obj[ id ] === undefined ) { obj[ id ] = {}; }
-		// 		obj = obj[ id ];
-
-		// 		keyPrefix = keyPrefix + id + '_';
-		// 		older = older.owner;
-		// 	}
-
-		// 	for ( let key in settings ) {
-
-		// 		let fullKey = keyPrefix + key;
-
-		// 		// TODO: Normalize value
-		// 		val = settings[ key ];
-
-		// 		// ---- save ----
-		// 		// Save in local settings
-		// 		obj[ key ] = val;
-		// 		// (First make it possible to use fullKey as a key
-		// 		// instead of the literal word "fullKey")
-		// 		var toSave 			= {};
-		// 		toSave[ fullKey ] 	= val;
-
-		// 		// very awkward, but what to do?
-		// 		if ( key === 'wpm' ) {
-		// 			state.settings.delayer._baseDelay = state.getters.delayer.get_baseDelay( val );
-		// 		}
-
-		// 		// TODO: Problem with callback for multiple settings
-		// 		storage.set( toSave, callback );
-
-		// 	}  // end for( each key )
-
-		// 	return val;
-		// };  // End ttSt.set()
-
-
 		// ????
 		ttSt.loadAll = function ( callback ) {
 			// ??: After loading all, set all the settings in here to those settings?
 			storage.loadAll( function loadAndSetAllSettings( all ) {
 
-				// // TODO: add more flexibility later
-				// var setts = ttSt.settings,
-				// 	step  = setts.stepper,
-				// 	dely  = setts.delayer,
-				// 	plab  = setts.playback;
-
-				// var keyBase = 'tickerText_'
-
-				// // For every key in every key in settings
-				// for ( let catKey in setts ) {
-				// 	// build a local storage name
-				// 	let browserKey = keyBase + catKey + '_';
-
-				// 	let category = setts[ catKey ];
-				// 	for ( let setKey in category ) {
-				// 		// build a local storage name
-				// 		browserKey = browserKey + setKey;
-				// 		let loadedVal = all[ browserKey ];
-				// 		let stateVal  = category[ setKey ];
-
-				// 		// if the name exists in the loaded values
-				// 		if ( loadedVal !== undefined ) {
-				// 			ttSt.set( { id: browserKey } )
-				// 		}
-
-
-				// 	}  // end for ( each setting )
-				// }  // end for ( settings category )
-
-
-				// for ( let key in all ) {
-				// 	let obj = ttSt;
-				// 	if ( /^tickerText_/.test( key ) ) {
-				// 		let parts = newKey.split( '_' );
-				// 		parts.shift();
-
-				// 		for ( let parti = 0; parti < parts.length; parti++ ) {
-				// 			let stateKey = parts[ parti ];
-				// 			if ( obj[ stateKey ] === undefined ) {
-				// 				obj[ stateKey ] = {};
-				// 			}
-
-				// 			// If it's the last part, just give it the value
-				// 			if ( parti === parts.length - 1 ) { obj[ stateKey ] = all[ key ]; }
-				// 			else { obj = obj[ stateKey ]; }
-
-				// 		}  // end for( dig into state object )
-
-				// 	}  // end if( setting belongs to tt )
-
-				// }  // end for( every setting )
-
-				// callback( all );
-
-				// For every value in loaded values
-					// If setting exists in state
-						// Set that value (don't save it?)
-
-				// For ever key that settings has
-					// If there's no value in it
-						// Use a default value
-						// Save the value
-
-				// or
-				// For every key in every key in default settings
-					// build a local storage name
-					// if the name exists in the loaded values
-						// Set that value in state (don't save it?)
-					// Otherwise, if no value already there
-						// Set using the default value
-						// Save in local storage
-
-				// and/or
-				// Start with cloning defaults
+				// Start by cloning defaults
 				var defs = ttSt.defaults;
 				for ( let catKey in defs ) {
 
@@ -301,12 +155,14 @@
 					}  // end for ( every category property )
 				}  // end for ( every default category )
 
+				// Gets any key with 'tickerText_' at the start - is
+				// this flexibility good or bad?
 
 				// Then override with local storage where needed
 				// For every key in local storage
 				for ( let key in all ) {
 
-					console.log( 'testing key:', key, key.indexOf( ttSt.keyPrefix ) );
+					// console.log( 'testing key:', key, key.indexOf( ttSt.keyPrefix ) );
 
 					// if it starts with 'tickerText_'
 					if ( key.indexOf( ttSt.keyPrefix ) !== -1 ) {
@@ -326,14 +182,17 @@
 				// TODO: ??: Set defaults in local storage? Needed?
 
 				callback( ttSt );
+
 			});
 
-
-			return ttSt;
+			// Don't return anything to be clear that a valid value
+			// has not yet been achieved
+			return;
 		};  // End ttSt.loadAll()
 
 
-		// ==== STATE ====
+
+		// ==== UNFORTUNATE ====
 
 		// Doesn't belong here, not sure wher to put it
 		// It's so we can use playback's processing without needing
@@ -344,20 +203,12 @@
 		};  // End ttSt.setProcess()
 
 
+
+		// ==== DO STARTING STUFF ====
+
 		ttSt._init = function () {
 			// FOR DEBUGGING
 			if ( ttSt._debug ) { storage.clear(); }
-
-			// if (!oldTTDefaults) {
-			// 	oldTTDefaults = ttSt.defaults;
-			// 	storage.set( ttSt.defaults, function(val){console.log('TTDefaults saved for first time:', val)} )
-			// }
-
-			// for ( let key in _settings ) {
-			// 	let val = oldTTDefaults[key] || _settings[key];
-			// 	ttSt.set( key, val );
-			// }
-
 			return ttSt;
 		};
 
