@@ -179,7 +179,8 @@
 
 
 		tSet._addBase = function ( coreUI ) {
-			var $open = $('<button id="__tt_open_settings" class="__tt-big-menu-button">Set</button>'),
+			var setPath = state.browser.extension.getURL('images/settings_2.svg');
+			var $open = $('<button id="__tt_open_settings" class="__tt-big-menu-button"><img src="' + setPath + '"></button>'),
 				$cont = $('<div id="__tt_settings_container"></div>'),
 				$taby = $('<div id="__tt_settings_tabs"></div>'),
 				$sets = $('<div id="__tt_settings_menus" class="__tt-scrollable-y"></div>');

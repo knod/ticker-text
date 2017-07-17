@@ -13,6 +13,7 @@
 * - ??: How to prevent double triggering on spacebar down then up?
 * - Save progress in state or something
 * - click on 'timer' pauses, lift off plays if was playing
+* - Resume playing after rewind, etc., if needed
 */
 
 'use strict';
@@ -44,7 +45,7 @@
 		var tPUI = {};
 		tPUI.id = 'playbackUI';
 
-		var browser = chrome || browser;
+		var browser = state.browser;
 
 		tPUI.modifierKeysDown = [];  // Will be emptied when app is closed
 		tPUI.sentenceModifierKey = 18;  // 'alt'
@@ -97,6 +98,10 @@
 		tPUI.open = function () {
 			tPUI.isOpen = true;
 			tPUI.player.current();  // show current fragment
+			tPUI.player.revert();  // get it in a non-jump state and, ideally, back to its previous play state...
+
+			// If setting configured to do so, start playing on open
+
 			// For scrubber bar when something new is processed
 			// TODO: ??: Give `player` a 'processBegin' and 'processFinish'?
 			 tPUI._setInitialValues();
@@ -140,37 +145,74 @@
 
 
 		// ----- DOM EVENTS ----- \\
-		tPUI.play = function () {
 
-			// For scrubber bar when something new is processed
-			// TODO: ??: Give `player` a 'processBegin' and 'processFinish'?
-			if ( tPUI.player.getIndex() === 0 ) {
-				 tPUI._setInitialValues();
+		// TODO: Add requirements for when showing play/pause or not...
+		// When user gives play/pause input - toggles button
+		// ??: When rewind/ffwd stops and play/pause is resumed?
+		// ??: When arrow is no longer held down and play/pause is resumed?
+		// ??: When scrubber is released?
+
+		var wasJustToggled = false;
+
+		tPUI._shouldShow = function () {
+			var doShow = false;
+			// console.log( 'was toggled before:', wasJustToggled );
+			if ( wasJustToggled ) {
+				wasJustToggled = false;
+				doShow = true;
 			}
 
-			$(playFeedback).removeClass('__tt-hidden');
-			$(pauseFeedback).addClass('__tt-hidden');
-			// https://jsfiddle.net/aL7kxe78/3/ fadeOut (ends with display: none)
-			// http://stackoverflow.com/a/4549418/3791179 <- opacity
-			$(playPauseFeedback).fadeTo(0, 0.7).fadeTo(700, 0)
+			return doShow;
+		};  // End tPUI._shouldShow()
+
+
+		tPUI.play = function () {
+			// console.log( 'play called' );
+			// For scrubber bar when something new is processed
+			// TODO: ??: Give `player` a 'processBegin' and 'processFinish'?
+			if ( tPUI.player.getIndex() === 0 ) { tPUI._setInitialValues(); }
+
+			if ( tPUI._shouldShow() ) {
+				$(playFeedback).removeClass('__tt-hidden');
+				$(pauseFeedback).addClass('__tt-hidden');
+				// https://jsfiddle.net/aL7kxe78/3/ fadeOut (ends with display: none)
+				// http://stackoverflow.com/a/4549418/3791179 <- opacity
+				$(playPauseFeedback).fadeTo(0, 0.7).fadeTo(700, 0)
+			}
+
+			coreUIObj.update();
+
 			return tPUI;
 		};
 
 		tPUI.pause = function () {
-			$(pauseFeedback).removeClass('__tt-hidden');
-			$(playFeedback).addClass('__tt-hidden');
-			$(playPauseFeedback).fadeTo(0, 0.7).fadeTo(700, 0)
+			// console.log( 'pause called' );
+			if ( tPUI._shouldShow() ) {
+				$(pauseFeedback).removeClass('__tt-hidden');
+				$(playFeedback).addClass('__tt-hidden');
+				$(playPauseFeedback).fadeTo(0, 0.7).fadeTo(700, 0)
+			}
+
+			coreUIObj.update();
+
 			return tPUI;
 		};
 
 		tPUI._togglePlayPause = function () {
+			// console.log( '1:', tPUI.player._currentAction, 'was toggled:', wasJustToggled );
+			tPUI.player.revert();
+			// console.log( '2:', tPUI.player._currentAction, 'was toggled:', wasJustToggled );
+			wasJustToggled = true;
+			// console.log( '3:', tPUI.player._currentAction, 'was toggled:', wasJustToggled );
 			tPUI.player.toggle();
+			// console.log( '4:', tPUI.player._currentAction, 'was toggled:', wasJustToggled );
 			return tPUI;
 		};
 
 
 		tPUI._rewindSentence = function () {
 			tPUI.player.prevSentence();
+			tPUI.player.revert();
 			return tPUI;
 		};
 
@@ -309,7 +351,7 @@
 			state.emitter.on( 'newWordFragment', tPUI._showNewFragment );
 			state.emitter.on( 'progress', tPUI._showProgress );
 
-			// // Scrubber events
+			// Scrubber events
 			progressNode.noUiSlider.on( 'start', tPUI._startScrubbing );
 			progressNode.noUiSlider.on( 'slide', tPUI._updateScrubbedWords );
 			progressNode.noUiSlider.on( 'change', tPUI._stopScrubbing );
@@ -393,6 +435,8 @@
 			coreUIObj.addTriggerable( tPUI );
 
 			tPUI._addEvents();
+
+			textButton.focus();
 
 			return tPUI;
 		};  // End tPUI._init()

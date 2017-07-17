@@ -43,12 +43,16 @@
 	/* ( {}, {} ) -> TTState
 	* 
 	*/
+		var tempB;
+		if ( typeof browser !== 'undefined' ) { tempB = browser }
+		else if ( typeof chrome !== 'undefined' ) { tempB = chrome }
 
 		var ttSt = {
 			id: 'tickerTextState',
 			keyPrefix: 'tickerText_',
 			_debug: debug || false,
 			emitter: new Emitter(),
+			browser: tempB,
 			defaults: defaults,
 			// settings: {}, // { stepper: {}, delayer: {}, playback: {} }
 			stepper: {}, delayer: {}, playback: {},

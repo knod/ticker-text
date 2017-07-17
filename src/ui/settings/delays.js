@@ -231,12 +231,12 @@
 			tDls._nodes.menu = $menu[0];
 
 			one( 'wpm', 'Words Per Minute' ).appendTo($menu);
-			one( 'slowstart', 'Slow Start Speed' ).appendTo($menu);
-			one( 'sentencedelay', 'Sentence Delay' ).appendTo($menu);
-			one( 'puncdelay', 'Other Punctuation Delay' ).appendTo($menu);
+			one( 'slowstart', 'Warmup Delay' ).appendTo($menu);  // TODO: Change to warmup speed (wmp)?
+			one( 'sentencedelay', 'Sentence End Delay' ).appendTo($menu);
+			one( 'puncdelay', 'Punctuation Delay' ).appendTo($menu);
 			one( 'shortworddelay', 'Short Word Delay' ).appendTo($menu);
 			one( 'longworddelay', 'Long Word Delay' ).appendTo($menu);
-			one( 'numericdelay', 'Numeric Delay' ).appendTo($menu);
+			one( 'numericdelay', 'Number Delay' ).appendTo($menu);
 
 			return tDls;
 		};  // End tDls._addNodes()
