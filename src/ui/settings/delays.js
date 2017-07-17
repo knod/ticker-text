@@ -188,20 +188,20 @@
 			var nodes = tDls._nodes,
 				$menu = $(nodes.menu);
 
-			nodes.wpmInput 				= $menu.find('#__rdly_wpm_input')[0];
-			nodes.wpmSlider 			= $menu.find('#__rdly_wpm_slider')[0];
-			nodes.slowStartInput 		= $menu.find('#__rdly_slowstart_input')[0];
-			nodes.slowStartSlider 		= $menu.find('#__rdly_slowstart_slider')[0];
-			nodes.sentenceDelayInput 	= $menu.find('#__rdly_sentencedelay_input')[0];
-			nodes.sentenceDelaySlider 	= $menu.find('#__rdly_sentencedelay_slider')[0];
-			nodes.puncDelayInput 		= $menu.find('#__rdly_puncdelay_input')[0];
-			nodes.puncDelaySlider 		= $menu.find('#__rdly_puncdelay_slider')[0];
-			nodes.shortWordDelayInput 	= $menu.find('#__rdly_shortworddelay_input')[0];
-			nodes.shortWordDelaySlider 	= $menu.find('#__rdly_shortworddelay_slider')[0];
-			nodes.longWordDelayInput 	= $menu.find('#__rdly_longworddelay_input')[0];
-			nodes.longWordDelaySlider 	= $menu.find('#__rdly_longworddelay_slider')[0];
-			nodes.numericDelayInput 	= $menu.find('#__rdly_numericdelay_input')[0];
-			nodes.numericDelaySlider 	= $menu.find('#__rdly_numericdelay_slider')[0];
+			nodes.wpmInput 				= $menu.find('#__tt_wpm_input')[0];
+			nodes.wpmSlider 			= $menu.find('#__tt_wpm_slider')[0];
+			nodes.slowStartInput 		= $menu.find('#__tt_slowstart_input')[0];
+			nodes.slowStartSlider 		= $menu.find('#__tt_slowstart_slider')[0];
+			nodes.sentenceDelayInput 	= $menu.find('#__tt_sentencedelay_input')[0];
+			nodes.sentenceDelaySlider 	= $menu.find('#__tt_sentencedelay_slider')[0];
+			nodes.puncDelayInput 		= $menu.find('#__tt_puncdelay_input')[0];
+			nodes.puncDelaySlider 		= $menu.find('#__tt_puncdelay_slider')[0];
+			nodes.shortWordDelayInput 	= $menu.find('#__tt_shortworddelay_input')[0];
+			nodes.shortWordDelaySlider 	= $menu.find('#__tt_shortworddelay_slider')[0];
+			nodes.longWordDelayInput 	= $menu.find('#__tt_longworddelay_input')[0];
+			nodes.longWordDelaySlider 	= $menu.find('#__tt_longworddelay_slider')[0];
+			nodes.numericDelayInput 	= $menu.find('#__tt_numericdelay_input')[0];
+			nodes.numericDelaySlider 	= $menu.find('#__tt_numericdelay_slider')[0];
 
 			return tDls;
 		};  // End tDls._assignSettingItems()
@@ -209,11 +209,11 @@
 
 		tDls._oneSetting = function ( idName, label ) {
 			// Should the very specific classes be ids?
-			return $('<div id="__rdly_' + idName + '_setting" class="__rdly-setting">\n\
-						<label class="__rdly-slider-label">' + label + '</label>\n\
-						<div class="__rdly-slider-controls">\n\
-							<input id="__rdly_' + idName + '_input" class="__rdly-slider-input" type="text"/>\n\
-							<div id="__rdly_' + idName + '_slider" class="__rdly-slider"></div>\n\
+			return $('<div id="__tt_' + idName + '_setting" class="__tt-setting">\n\
+						<label class="__tt-slider-label">' + label + '</label>\n\
+						<div class="__tt-slider-controls">\n\
+							<input id="__tt_' + idName + '_input" class="__tt-slider-input" type="text"/>\n\
+							<div id="__tt_' + idName + '_slider" class="__tt-slider"></div>\n\
 						</div>\n\
 					</div>')
 		};  // End tDls._oneSetting()
@@ -223,7 +223,7 @@
 			var one = tDls._oneSetting;
 
 			// Maybe this should belong to something else - a settings manager
-			var $menu = $('<div id="__rdly_speed_settings_menu"></div>');
+			var $menu = $('<div id="__tt_speed_settings_menu"></div>');
 			tDls.node = $menu[0];
 
 			coreSettings.addMenu( tDls );
