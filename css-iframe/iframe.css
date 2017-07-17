@@ -83,6 +83,7 @@ html, body {
 	display: flex;
 	/*height: 100%;*/
 	padding: 0.75%;
+	align-self: flex-start;
 }
 #__tt #__tt_bar_left {
 	align-items: center;

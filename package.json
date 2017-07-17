@@ -1,6 +1,6 @@
 {
   "name": "ticker-text",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "description": "A browser extension to give a little more accessiblity to online articles",
   "main": "dist/ticker-text.js",
   "scripts": {
