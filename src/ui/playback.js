@@ -100,12 +100,14 @@
 			tPUI.player.current();  // show current fragment
 			tPUI.player.revert();  // get it in a non-jump state and, ideally, back to its previous play state...
 
-			// If setting configured to do so, start playing on open
-
 			// For scrubber bar when something new is processed
 			// TODO: ??: Give `player` a 'processBegin' and 'processFinish'?
 			 tPUI._setInitialValues();
 			$(playPauseFeedback).hide();
+
+			// TODO: If setting configured to do so, start playing on open
+			if ( state.playback.playOnOpen ) { tPUI.play( true ); }
+
 			return tPUI;
 		};
 		tPUI.close = function () {
@@ -166,13 +168,13 @@
 		};  // End tPUI._shouldShow()
 
 
-		tPUI.play = function () {
+		tPUI.play = function ( doShow ) {
 			// console.log( 'play called' );
 			// For scrubber bar when something new is processed
 			// TODO: ??: Give `player` a 'processBegin' and 'processFinish'?
 			if ( tPUI.player.getIndex() === 0 ) { tPUI._setInitialValues(); }
 
-			if ( tPUI._shouldShow() ) {
+			if ( doShow || tPUI._shouldShow() ) {
 				$(playFeedback).removeClass('__tt-hidden');
 				$(pauseFeedback).addClass('__tt-hidden');
 				// https://jsfiddle.net/aL7kxe78/3/ fadeOut (ends with display: none)
@@ -185,9 +187,9 @@
 			return tPUI;
 		};
 
-		tPUI.pause = function () {
+		tPUI.pause = function ( doShow ) {
 			// console.log( 'pause called' );
-			if ( tPUI._shouldShow() ) {
+			if ( doShow || tPUI._shouldShow() ) {
 				$(pauseFeedback).removeClass('__tt-hidden');
 				$(playFeedback).addClass('__tt-hidden');
 				$(playPauseFeedback).fadeTo(0, 0.7).fadeTo(700, 0)

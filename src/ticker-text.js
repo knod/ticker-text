@@ -59,9 +59,7 @@
 			var top = constructors.topLevel;
 
 			ttxt.storage = new top.Storage();
-			// ttxt.storage.loadAll( ttxt._afterLoad );
 
-			// TODO:
 			ttxt.state = new top.State( ttxt.storage, top.Emitter, true );
 			ttxt.state.loadAll( ttxt._afterLoad );
 
@@ -152,7 +150,7 @@
 		ttxt.readFullPage = function () {
 			// First time opens. When open, starts reading
 			// TODO: ??: customizable so can start right away?
-			if ( !ttxt.state.isOpen ) { ttxt.open(); }
+			else if ( !ttxt.state.isOpen ) { ttxt.open(); }
 			// else { ttxt.read(); }
 
 			return ttxt;
