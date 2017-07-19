@@ -1,5 +1,4 @@
-// delays.js
-/* TTDelays.js
+/* delays.js
 * 
 * UI elements for setting various speeds/delays for
 * certain characteristics of words, like length and
@@ -24,7 +23,7 @@
     }
 }(this, function ( $, noUiSlider ) {
 
-	"use strict";
+	'use strict';
 
 	var TTDelays = function ( state, coreSettings ) {
 
@@ -120,7 +119,7 @@
 				sliderNode: nodes.wpmSlider,
 				range: 		{ min: 1, max: 1200 },
 				startVal: 	setts.wpm,
-				step: 		25,resolution: 1,
+				step: 		25, resolution: 1,
 				inputNode: 	nodes.wpmInput,
 				operation: 	'wpm'
 			});
@@ -129,7 +128,7 @@
 				sliderNode: nodes.slowStartSlider,
 				range: 		{ min: 0, max: 20 },
 				startVal: 	setts.slowStartDelay,
-				step: 		1,resolution: 1,
+				step: 		1, resolution: 1,
 				inputNode: 	nodes.slowStartInput,
 				operation: 	'slowStartDelay'
 			});

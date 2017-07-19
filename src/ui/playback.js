@@ -107,6 +107,7 @@
 
 			// TODO: If setting configured to do so, start playing on open
 			if ( state.playback.playOnOpen ) { tPUI.play( true ); }
+			else { tPUI.pause( true ); }
 
 			return tPUI;
 		};
@@ -174,7 +175,8 @@
 			// TODO: ??: Give `player` a 'processBegin' and 'processFinish'?
 			if ( tPUI.player.getIndex() === 0 ) { tPUI._setInitialValues(); }
 
-			if ( doShow || tPUI._shouldShow() ) {
+			var shouldShow = tPUI._shouldShow();
+			if ( doShow === true || shouldShow ) {
 				$(playFeedback).removeClass('__tt-hidden');
 				$(pauseFeedback).addClass('__tt-hidden');
 				// https://jsfiddle.net/aL7kxe78/3/ fadeOut (ends with display: none)
@@ -189,7 +191,8 @@
 
 		tPUI.pause = function ( doShow ) {
 			// console.log( 'pause called' );
-			if ( doShow || tPUI._shouldShow() ) {
+			var shouldShow = tPUI._shouldShow();
+			if ( doShow === true || shouldShow ) {
 				$(pauseFeedback).removeClass('__tt-hidden');
 				$(playFeedback).addClass('__tt-hidden');
 				$(playPauseFeedback).fadeTo(0, 0.7).fadeTo(700, 0)
@@ -225,7 +228,8 @@
 		tPUI._showNewFragment = function ( evnt, player, fragment ) {
 			var chars = fragment;
 			// Adds pauses for line breaks
-			// TOOD: Deal with line breaks in player instead? Or state?
+			// TODO: Deal with line breaks in player instead? Or state?
+			// TODO: Allow customization of pause for paragraph
 			if ( !whiteSpaceRegexp.test(chars) ) {
 				$(textButton).html( chars );
 			} else {

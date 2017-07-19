@@ -207,6 +207,8 @@
 
 			coreUI.addTriggerable( tSet );
 
+			tSet.coreUI = coreUI;
+
 			var constructors = uiConstructors.settings;
 			for ( var key in constructors ) {
 				let Constr = constructors[ key ];

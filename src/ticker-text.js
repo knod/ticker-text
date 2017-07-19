@@ -150,7 +150,7 @@
 		ttxt.readFullPage = function () {
 			// First time opens. When open, starts reading
 			// TODO: ??: customizable so can start right away?
-			else if ( !ttxt.state.isOpen ) { ttxt.open(); }
+			if ( !ttxt.state.isOpen ) { ttxt.open(); }
 			// else { ttxt.read(); }
 
 			return ttxt;

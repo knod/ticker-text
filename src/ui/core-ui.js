@@ -160,6 +160,40 @@
 		};
 
 
+		tCui._resizeBarElements = function () {
+
+			if ( !tCui.nodes ) { return tCui; }
+
+			var left 	= tCui.nodes.barLeft,
+				right 	= tCui.nodes.barRight,
+				center 	= tCui.nodes.barCenter;
+
+			var lStyles = window.getComputedStyle( left ),
+				rStyles = window.getComputedStyle( right ),
+				cStyles = window.getComputedStyle( center );
+
+			var lWidth = parseFloat( lStyles.width ),
+				rWidth = parseFloat( rStyles.width );
+
+			// This assumes that left is always bigger than right,
+			// which is a shame, but maybe necessary so that we don't
+			// get stuck with something tiny
+			if ( lWidth > rWidth ) {
+				right.style.width = lWidth + 'px';  // TODO: ??: How to change to `em`?
+			}
+
+			// Let styles take effect, I hope...
+			setTimeout(function() {
+				var styles = window.getComputedStyle( tCui.nodes.doc.querySelector( '#__tt_text_button' ) ),
+					width = parseInt( styles.width ),
+					fontSize = parseInt( styles.fontSize ),
+					elemChars = Math.floor( width / fontSize );
+				state.set( { id: 'stepper' }, { widthByEm: elemChars } );
+			}, 1);
+
+		};  // End tCui._resizeBarElements()
+
+
 		// iframe element sizing
 		// https://jsfiddle.net/fpd4fb80/31/
 		tCui._resizeIframeAndContents = function () {
@@ -191,7 +225,7 @@
 			// How much needs to be subtracted (almost, see below) from the
 			// scrollable node's height (not contents) in order to fit on the page.
 				diff 			= (potentialBottom - screenBottom);
-			console.log("height", height)
+			// console.log("height", height)
 
 			// Have taken care off stuff above and in the contents
 			// Now will account for all the padding/borders, etc at
@@ -233,6 +267,7 @@
 			// from height: 0 to whatever height
 
 			setTimeout(tCui._resizeIframeAndContents, 4);
+			setTimeout(tCui._resizeBarElements, 4);
 			// Delay probably won't work when there's a lot of lag.
 			// TODO: Wait for an element to appear properly before calling resize
 			return tCui;

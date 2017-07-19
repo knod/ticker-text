@@ -83,18 +83,20 @@ html, body {
 	display: flex;
 	/*height: 100%;*/
 	padding: 0.75%;
-	align-self: flex-start;
 }
 #__tt #__tt_bar_left {
 	align-items: center;
+	align-self: flex-start;
 }
-/*#__tt #__tt_bar_center {
-	height: 100%;
-	text-align: center;
-}*/
-/*#__tt #__tt_bar_right {
+#__tt #__tt_bar_center {
+    display: flex;
+    flex: 1;
+}
+#__tt #__tt_bar_right {
+	align-self: flex-start;
+	justify-content: flex-end;
 	align-items: flex-start;
-}*/
+}
 #__tt #__tt_close {
 	align-self: flex-start;
 }
@@ -102,6 +104,8 @@ html, body {
 #__tt #__tt_text_elements {
 	display: flex;
 	align-items: center;
+	justify-content: center;
+	flex: 1;
 	/* em counts the widest possible text */
 	width: 13em;
 	/*height: 100%;*/

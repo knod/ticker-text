@@ -20,7 +20,8 @@
 			PlaybackUI: require( './ui/playback.js' ),
 			SettingsUI: require( './ui/settings/settings-core.js' ),
 			settings: {
-				Delays: require( './ui/settings/delays.js' )
+				Delays: require( './ui/settings/delays.js' ),
+				Appearance: require( './ui/settings/appearance.js' )
 			}
 		}
 	};

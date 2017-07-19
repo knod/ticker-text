@@ -38,7 +38,8 @@
 			},
 			stepper: {
 				// ==== fragmentor/splitter ====
-				maxNumCharacters: 10
+				maxNumCharacters: 10,
+				minLengthForSeparator: 3
 			},
 			playback: {
 				transformFragment: function ( frag ) {
