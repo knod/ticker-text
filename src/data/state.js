@@ -5,6 +5,12 @@
 * - Flatten storage structure?
 * - Should user configs be in a particular runtime place (this
 * 	would be in addition to being in local storage)
+* - Add check for over 100 or so storage calls per minute. If so,
+* 	wait a min and then set to the current value, and that way
+* 	avoid max write operations per minute error. (Worth noting that
+* 	this is a good reason to not get directly from browser storage
+* 	- these limitations would prevent view from being updated
+* 	correctly)
 * 
 * NOTES:
 * - When you save a setting it normalizes your value and returns

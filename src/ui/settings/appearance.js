@@ -117,6 +117,11 @@
 				inputNode: 	nodes.maxNumCharsInput,
 				operation: 	'maxNumCharacters_user',
 				callback: 	function ( stepState ) {
+
+					coreSettings.coreUI.nodes.textElements.style.flexBasis 	= 'auto';
+					coreSettings.coreUI.nodes.barCenter.style.flexBasis 	= 'auto';
+
+
 					// TODO: Need to update this whenever size (viewport, font, etc.) changes
 					
 					// // get width of text element
@@ -135,18 +140,32 @@
 					// } else {
 					// 	state.set( tAnc.stepper, { maxNumCharacters: stepState.maxNumCharacters_user } );
 					// }
-					var DOMWidth 	= stepState.widthByEm,
-						userWidth 	= stepState.maxNumCharacters_user,
-						width 		= null;
-					// Get the smaller between the element width and the user setting
-					if ( DOMWidth && DOMWidth <= userWidth ) { width = DOMWidth; }
-					else { width = userWidth; }
 
-					var elem = coreSettings.coreUI.nodes.textElements,
-						text = elem.querySelector( '#__tt_text_button' );
-					state.set( tAnc.stepper, { maxNumCharacters: width } );
-					text.style.width = width + 2 + 'em';
-				}
+					// Let styles take effect, I hope... (https://stackoverflow.com/a/21043017)
+					setTimeout(function updateWidth() {
+
+						var DOMWidth 	= stepState.widthByEm,
+							userWidth 	= stepState.maxNumCharacters_user,
+							width 		= null;
+						// Get the smaller between the element width and the user setting
+						if ( DOMWidth && DOMWidth <= userWidth ) { width = DOMWidth; }
+						else {
+							// Give a little padding if possible
+							if ( DOMWidth >= userWidth + 2 ) { width = userWidth + 2; }
+							else { width = userWidth; }
+						}
+
+						console.log( 'DOMWidth:', DOMWidth, '; userWidth:', userWidth, '; final width:', width );
+
+						var elem = coreSettings.coreUI.nodes.textElements,
+							text = elem.querySelector( '#__tt_text_button' );
+						state.set( tAnc.stepper, { maxNumCharacters: width } );
+						// text.style.maxWidth = width + 'em';
+						elem.style.flexBasis = width + 'em';
+						coreSettings.coreUI.nodes.barCenter.style.flexBasis = width + 'em';
+
+					}, 0);
+				}  // End callback()
 			});
 
 			return tAnc;

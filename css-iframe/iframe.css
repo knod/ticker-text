@@ -91,6 +91,8 @@ html, body {
 #__tt #__tt_bar_center {
     display: flex;
     flex: 1;
+	align-items: center;
+	justify-content: center;
 }
 #__tt #__tt_bar_right {
 	align-self: flex-start;
@@ -105,10 +107,6 @@ html, body {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	flex: 1;
-	/* em counts the widest possible text */
-	width: 13em;
-	/*height: 100%;*/
 	height: 2em;
 }
 

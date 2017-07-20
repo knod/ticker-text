@@ -30,7 +30,7 @@
 	var TTSettingsCore = function ( state, coreUI, uiConstructors, filepaths ) {
 
 		var tSet = {};
-		tSet.id  = 'settingsCore';
+		tSet.id  = 'coreSettings';
 
 		tSet.settings = {};
 

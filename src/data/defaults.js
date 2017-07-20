@@ -38,7 +38,7 @@
 			},
 			stepper: {
 				// ==== fragmentor/splitter ====
-				maxNumCharacters: 10,
+				maxNumCharacters: 24,
 				minLengthForSeparator: 3
 			},
 			playback: {

@@ -95,10 +95,13 @@
 			tPUI.modifierKeysDown = [];
 			return tPUI;
 		};
+
+		// -- iterable -- \\
 		tPUI.open = function () {
 			tPUI.isOpen = true;
 			tPUI.player.current();  // show current fragment
-			tPUI.player.revert();  // get it in a non-jump state and, ideally, back to its previous play state...
+			// get it in a non-jump state and, ideally, back to its previous play/pause state...
+			tPUI.player.revert();
 
 			// For scrubber bar when something new is processed
 			// TODO: ??: Give `player` a 'processBegin' and 'processFinish'?
@@ -115,7 +118,15 @@
 			tPUI.isOpen = false;
 			return tPUI;
 		};
+		tPUI.update = function () {
+			console.log('updating player')
+			tPUI.player.current();  // show current fragment
+			// get it in a non-jump state and, ideally, back to its previous play/pause state...
+			tPUI.player.revert();
+			return tPUI;
+		};  // End tPUI.update()
 
+		// -- non-iterable -- \\
 		tPUI.hideText = function () {
 			$(textButton).addClass('__tt-hidden');
 			return tPUI;
@@ -184,8 +195,6 @@
 				$(playPauseFeedback).fadeTo(0, 0.7).fadeTo(700, 0)
 			}
 
-			coreUIObj.update();
-
 			return tPUI;
 		};
 
@@ -197,8 +206,6 @@
 				$(playFeedback).addClass('__tt-hidden');
 				$(playPauseFeedback).fadeTo(0, 0.7).fadeTo(700, 0)
 			}
-
-			coreUIObj.update();
 
 			return tPUI;
 		};

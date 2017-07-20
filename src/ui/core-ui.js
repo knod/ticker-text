@@ -14,6 +14,8 @@
 * 	can be accessed more quickly). Though now it's an iframe, so how does
 * 	that work for accessibility...? Maybe set up some tab-able controls
 * 	that are invisibile that are outside of the iframe...
+* - Re-fetch word on view update in case the word is now to long for the
+* 	viewport.
 */
 
 'use strict';
@@ -94,7 +96,7 @@
 		// =========== RUNTIME ACTIONS =========== \\
 
 		tCui.triggerTriggerable = function ( ourFuncName, theirFuncName ) {
-			tCui[ ourFuncName ]();
+			if ( ourFuncName ) { tCui[ ourFuncName ](); }
 			for ( var trigID in tCui._toTrigger ) {
 				let obj = tCui._toTrigger[ trigID ]
 				if ( obj[ theirFuncName ] ) obj[ theirFuncName ]();
@@ -140,7 +142,7 @@
 
 		tCui.show = function () {
 			$iframe.show();
-			$(tickerText).slideDown( 200 );  // can't `.update()` at end
+			$(tickerText).slideDown( 200, function updateAfterShow() { tCui.update(); } );  // can't `.update()` at end
 			return tCui;
 		};
 
@@ -164,32 +166,66 @@
 
 			if ( !tCui.nodes ) { return tCui; }
 
-			var left 	= tCui.nodes.barLeft,
-				right 	= tCui.nodes.barRight,
-				center 	= tCui.nodes.barCenter;
+			// var left 	= tCui.nodes.barLeft,
+			// 	right 	= tCui.nodes.barRight,
+			// 	center 	= tCui.nodes.barCenter;
 
-			var lStyles = window.getComputedStyle( left ),
-				rStyles = window.getComputedStyle( right ),
-				cStyles = window.getComputedStyle( center );
+			// var lStyles = window.getComputedStyle( left ),
+			// 	rStyles = window.getComputedStyle( right ),
+			// 	cStyles = window.getComputedStyle( center );
 
-			var lWidth = parseFloat( lStyles.width ),
-				rWidth = parseFloat( rStyles.width );
+			// var lWidth = parseFloat( lStyles.width ),
+			// 	rWidth = parseFloat( rStyles.width );
 
-			// This assumes that left is always bigger than right,
-			// which is a shame, but maybe necessary so that we don't
-			// get stuck with something tiny
-			if ( lWidth > rWidth ) {
-				right.style.width = lWidth + 'px';  // TODO: ??: How to change to `em`?
-			}
+			// // This assumes that left is always bigger than right,
+			// // which is a shame, but maybe necessary so that we don't
+			// // get stuck with something tiny
+			// if ( lWidth > rWidth ) {
+			// 	right.style.width = lWidth + 'px';  // TODO: ??: How to change to `em`?
+			// }
 
-			// Let styles take effect, I hope...
+			// Works, but sometimes not till the update after the one that has the change
+			// Problem with element not being rendered yet, but no solution
+			// yet found.
+
+			// tCui.nodes.textElements.style.overflow 	= 'hidden';
+			tCui.nodes.textElements.style.flexBasis = 'auto';
+			tCui.nodes.barCenter.style.flexBasis 	= 'auto';
+			// Let styles take effect, I hope... (https://stackoverflow.com/a/21043017)
+			// Set what the max number of characters could be if based only on the DOM
 			setTimeout(function() {
-				var styles = window.getComputedStyle( tCui.nodes.doc.querySelector( '#__tt_text_button' ) ),
-					width = parseInt( styles.width ),
-					fontSize = parseInt( styles.fontSize ),
-					elemChars = Math.floor( width / fontSize );
+				// var styles 		= window.getComputedStyle( tCui.nodes.doc.querySelector( '#__tt_text_button' ) ),
+				var styles 		= window.getComputedStyle( tCui.nodes.barCenter ),
+					width 		= parseFloat( styles.width ),
+					fontSize 	= parseFloat( styles.fontSize ),
+					elemChars 	= Math.floor( width / fontSize );
 				state.set( { id: 'stepper' }, { widthByEm: elemChars } );
-			}, 1);
+
+
+
+				var DOMWidth 	= state.stepper.widthByEm,
+					userWidth 	= state.stepper.maxNumCharacters_user,
+					width 		= null;
+				// Get the smaller between the element width and the user setting
+				if ( DOMWidth && DOMWidth <= userWidth ) { width = DOMWidth; }
+				else {
+					// Give a little padding if possible
+					if ( DOMWidth === undefined || DOMWidth >= userWidth + 2 ) { width = userWidth + 2; }
+					else { width = userWidth; }
+				}
+
+				console.log( 'DOMWidth:', DOMWidth, '; userWidth:', userWidth, '; final width:', width );
+
+				// Update the size of the elements
+				var elem = tCui.nodes.textElements,
+					text = elem.querySelector( '#__tt_text_button' );
+				state.set( {id: 'stepper'}, { maxNumCharacters: width } );
+				// text.style.maxWidth = width + 'em';
+				elem.style.flexBasis = width + 'em';
+				// elem.style.width = 2 + 'em';
+				tCui.nodes.barCenter.style.flexBasis = width + 'em';
+
+			}, 0);
 
 		};  // End tCui._resizeBarElements()
 
@@ -270,6 +306,10 @@
 			setTimeout(tCui._resizeBarElements, 4);
 			// Delay probably won't work when there's a lot of lag.
 			// TODO: Wait for an element to appear properly before calling resize
+ 
+ 			// Update the number of characters currently showing
+			tCui.triggerTriggerable( null, 'update' );
+
 			return tCui;
 		};
 

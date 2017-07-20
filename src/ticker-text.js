@@ -2,6 +2,15 @@
 * 
 * TODO:
 * - User option to start reading on opening
+* - Skipping words when all user settings set to 0. Fix
+* 	- Putting values in input is validated, so that's not
+* 	the problem
+* - Maybe remove user delay settings that are fractions. Yes
+* 	it allows users to speed things up as well as slow things
+* 	down, but it seems like it would be unclear to the average
+* 	user. Maybe create a button for 'slower' and 'faster'.
+* - Add text that says '# times slower' to delays to clarify
+* - Prevent scrolling on body of document when scrolling on app.
 */
 
 'use strict';
