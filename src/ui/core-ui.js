@@ -48,6 +48,9 @@
 		var tickerText, textElems, $iframe;
 		tCui._toTrigger = {};
 
+		var originalBodyMarginTop = window.getComputedStyle( document.body ).marginTop;
+		console.log( originalBodyMarginTop );
+
 
 
 		// =========== DOM STRINGS =========== \\
@@ -96,11 +99,12 @@
 		// =========== RUNTIME ACTIONS =========== \\
 
 		tCui.triggerTriggerable = function ( ourFuncName, theirFuncName ) {
-			if ( ourFuncName ) { tCui[ ourFuncName ](); }
 			for ( var trigID in tCui._toTrigger ) {
 				let obj = tCui._toTrigger[ trigID ]
 				if ( obj[ theirFuncName ] ) obj[ theirFuncName ]();
 			};
+			// Important note: This object always updates last. May matter.
+			if ( ourFuncName ) { tCui[ ourFuncName ](); }
 			return tCui;
 		};  // End tCui.triggerTriggerable()
 
@@ -153,6 +157,18 @@
 		tCui.hide = function () {
 			$iframe.hide();
 			$(tickerText).slideUp( 200 );
+			// Other stuff is in a setTimeout and this needs to run after those
+			// They're waiting for other DOM updates, so have to be in a setTimeout
+			// We're kind of hosed.
+			setTimeout(function restoreBodyMargin() {
+				// Nested for the same reason
+				// setTimeout(function(){
+					setTimeout(function(){
+						document.body.style.marginTop = originalBodyMarginTop;
+						// console.log( 'hiding', originalBodyMarginTop, window.getComputedStyle(document.body).marginTop );
+					}, 0);
+				// }, 0);
+			}, 0);
 			return tCui;
 		};
 
@@ -286,7 +302,10 @@
 			// extra 'outer top' value needs to be subtracted.
 			var currentOuterHeight 	= top + newHeight + bottomDiff;
 
-			$iframe[0].style.height = currentOuterHeight + 'px';
+			var val = currentOuterHeight + 'px'
+			$iframe[0].style.height = val;
+			document.body.style.marginTop = val;
+
 
 			return tCui;
 		};  // End tCui._resizeIframeAndContents()

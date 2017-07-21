@@ -119,7 +119,6 @@
 			return tPUI;
 		};
 		tPUI.update = function () {
-			console.log('updating player')
 			tPUI.player.current();  // show current fragment
 			// get it in a non-jump state and, ideally, back to its previous play/pause state...
 			tPUI.player.revert();
