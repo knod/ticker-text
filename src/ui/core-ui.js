@@ -304,6 +304,7 @@
 
 			var val = currentOuterHeight + 'px'
 			$iframe[0].style.height = val;
+			// TODO: Add original margin to this as well
 			document.body.style.marginTop = val;
 
 

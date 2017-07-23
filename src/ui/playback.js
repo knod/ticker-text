@@ -99,19 +99,24 @@
 		// -- iterable -- \\
 		tPUI.open = function () {
 			tPUI.isOpen = true;
-			tPUI.player.current();  // show current fragment
+			state.player.current();  // show current fragment
 			// get it in a non-jump state and, ideally, back to its previous play/pause state...
-			tPUI.player.revert();
+			state.player.revert();
 
 			// For scrubber bar when something new is processed
 			// TODO: ??: Give `player` a 'processBegin' and 'processFinish'?
 			 tPUI._setInitialValues();
 			$(playPauseFeedback).hide();
 
-			// TODO: If setting configured to do so, start playing on open
-			if ( state.playback.playOnOpen ) { tPUI.play( true ); }
-			else { tPUI.pause( true ); }
+			// // TODO: If setting configured to do so, start playing on open
+			// if ( state.misc.playOnOpen ) { tPUI._showPlay( true ); }
+			// else { tPUI._showPause( true ); }
 
+			return tPUI;
+		};
+		tPUI.play = function () {
+			state.player.play();
+			// TODO: tPUI._showPlay( true ); // (how to do the same with pause on open...?)
 			return tPUI;
 		};
 		tPUI.close = function () {
@@ -119,13 +124,19 @@
 			return tPUI;
 		};
 		tPUI.update = function () {
-			tPUI.player.current();  // show current fragment
+			state.player.current();  // show current fragment
 			// get it in a non-jump state and, ideally, back to its previous play/pause state...
-			tPUI.player.revert();
+			state.player.revert();
 			return tPUI;
 		};  // End tPUI.update()
 
 		// -- non-iterable -- \\
+
+		// tPUI.loadPlayer = function ( player ) {
+		// 	state.player = player;
+		// 	return tPUI;
+		// };  // End tPUI.loadPlayer()
+
 		tPUI.hideText = function () {
 			$(textButton).addClass('__tt-hidden');
 			return tPUI;
@@ -169,8 +180,11 @@
 
 		tPUI._shouldShow = function () {
 			var doShow = false;
-			// console.log( 'was toggled before:', wasJustToggled );
-			if ( wasJustToggled ) {
+			
+			if ( typeof override === 'boolean' ) {
+				doShow = override
+			} else if ( wasJustToggled ) {
+				// console.log( 'was toggled before:', wasJustToggled );
 				wasJustToggled = false;
 				doShow = true;
 			}
@@ -179,11 +193,11 @@
 		};  // End tPUI._shouldShow()
 
 
-		tPUI.play = function ( doShow ) {
+		tPUI._showPlay = function ( doShow ) {
 			// console.log( 'play called' );
 			// For scrubber bar when something new is processed
 			// TODO: ??: Give `player` a 'processBegin' and 'processFinish'?
-			if ( tPUI.player.getIndex() === 0 ) { tPUI._setInitialValues(); }
+			if ( state.player.getIndex() === 0 ) { tPUI._setInitialValues(); }
 
 			var shouldShow = tPUI._shouldShow();
 			if ( doShow === true || shouldShow ) {
@@ -197,7 +211,7 @@
 			return tPUI;
 		};
 
-		tPUI.pause = function ( doShow ) {
+		tPUI._showPause = function ( doShow ) {
 			// console.log( 'pause called' );
 			var shouldShow = tPUI._shouldShow();
 			if ( doShow === true || shouldShow ) {
@@ -210,20 +224,20 @@
 		};
 
 		tPUI._togglePlayPause = function () {
-			// console.log( '1:', tPUI.player._currentAction, 'was toggled:', wasJustToggled );
-			tPUI.player.revert();
-			// console.log( '2:', tPUI.player._currentAction, 'was toggled:', wasJustToggled );
+			// console.log( '1:', state.player._currentAction, 'was toggled:', wasJustToggled );
+			state.player.revert();
+			// console.log( '2:', state.player._currentAction, 'was toggled:', wasJustToggled );
 			wasJustToggled = true;
-			// console.log( '3:', tPUI.player._currentAction, 'was toggled:', wasJustToggled );
-			tPUI.player.toggle();
-			// console.log( '4:', tPUI.player._currentAction, 'was toggled:', wasJustToggled );
+			// console.log( '3:', state.player._currentAction, 'was toggled:', wasJustToggled );
+			state.player.toggle();
+			// console.log( '4:', state.player._currentAction, 'was toggled:', wasJustToggled );
 			return tPUI;
 		};
 
 
 		tPUI._rewindSentence = function () {
-			tPUI.player.prevSentence();
-			tPUI.player.revert();
+			state.player.prevSentence();
+			state.player.revert();
 			return tPUI;
 		};
 
@@ -257,7 +271,7 @@
 
 		tPUI._setInitialValues = function () {
 			progressNode.noUiSlider.updateOptions({
-				range: { min: 0, max: ( tPUI.player.getLength() - 1 ) }
+				range: { min: 0, max: ( state.player.getLength() - 1 ) }
 			});
 			return tPUI;
 		}
@@ -271,14 +285,14 @@
 
 
 		tPUI._updateScrubbedWords = function ( values, handle ) {
-			tPUI.player.jumpTo( parseInt( values[ handle ] ) );
+			state.player.jumpTo( parseInt( values[ handle ] ) );
 			return tPUI;
 		};  // End tPUI._updateScrubbedWords()
 
 
 		tPUI._stopScrubbing = function ( values, handle ) {
 			tPUI.isScrubbing = false;
-			tPUI.player.revert();
+			state.player.revert();
 			return tPUI;
 		};  // End tPUI._stopScrubbing()
 
@@ -299,7 +313,7 @@
 
 			// If it's not a modifier key, revert
 			} else {
-				tPUI.player.revert()
+				state.player.revert()
 			}
 
 			return tPUI;
@@ -321,11 +335,11 @@
 			}
 
 			if ( tPUI.modifierKeysDown.indexOf( smod ) > -1 ) {
-				if ( keyCode === 39 ) { tPUI.player.nextSentence(); }
-				else if ( keyCode === 37 ) { tPUI.player.prevSentence(); }
+				if ( keyCode === 39 ) { state.player.nextSentence(); }
+				else if ( keyCode === 37 ) { state.player.prevSentence(); }
 			} else {
-				if ( keyCode === 39 ) { tPUI.player.nextWord(); }
-				else if ( keyCode === 37 ) { tPUI.player.prevWord(); }
+				if ( keyCode === 39 ) { state.player.nextWord(); }
+				else if ( keyCode === 37 ) { state.player.prevWord(); }
 			}
 
 			return tPUI;
@@ -357,8 +371,8 @@
 
 		tPUI._addEvents = function () {
 			// Timer events
-			state.emitter.on( 'playBegin', tPUI.play );
-			state.emitter.on( 'pauseFinish', tPUI.pause );
+			state.emitter.on( 'playBegin', tPUI._showPlay );
+			state.emitter.on( 'pauseFinish', tPUI._showPause );
 			// state.emitter.on( 'startFinish', tPUI._start );
 			state.emitter.on( 'newWordFragment', tPUI._showNewFragment );
 			state.emitter.on( 'progress', tPUI._showProgress );
@@ -386,17 +400,18 @@
 
 		tPUI._init = function () {
 
-			tPUI.player 	= new Player( state );
-			// They don't have their own and it doesn't quite make
-			// sense to add that there, so we have to do it here.
-			tPUI.player.id 	= 'playback';
-			// no `tPUI.player.owner` - state needs this as top-most level
-			tPUI.player._stepper.id 	= 'stepper';
-			tPUI.player._stepper.owner 	= tPUI.player;
-			tPUI.player._delayer.id 	= 'delayer';
-			tPUI.player._delayer.owner 	= tPUI.player;
+			// state.player 	= new Player( state );
+			// // They don't have their own and it doesn't quite make
+			// // sense to add that there, so we have to do it here.
+			// state.player.id 	= 'playback';
 
-			state.setProcess( tPUI.player.process );
+			// no `state.player.owner` - state needs this as top-most level
+			state.player._stepper.id 	= 'stepper';
+			// state.player._stepper.owner 	= state.player;
+			state.player._delayer.id 	= 'delayer';
+			// state.player._delayer.owner 	= state.player;
+
+			state.setProcess( state.player.process );
 
 
 			tPUI.modifierKeysDown = [];  // TODO: Empty non-destructively

@@ -61,12 +61,14 @@
 			browser: tempB,
 			defaults: defaults,
 			// settings: {}, // { stepper: {}, delayer: {}, playback: {} }
-			stepper: {}, delayer: {}, playback: {},
+			misc: {}, stepper: {}, delayer: {}, playback: {},
 			// getters: {
 			// 	delays: delayNormer,  // ui settings name
 			// 	stepper: stepperNormer,
 			// 	playback: {}
 			// },
+			cached: {},
+			player: null,
 			isOpen: false,
 			index: 0,  // start at beginning of text
 			parsedText: '',  // Till this is set
@@ -199,6 +201,14 @@
 			// has not yet been achieved
 			return;
 		};  // End ttSt.loadAll()
+
+
+
+		// ==== RUNTIME LOADING ====
+		ttSt.cache = function ( player, id ) {
+			ttSt.cached[ id ] = player;
+			return ttSt;
+		};  // End ttSt.cache()
 
 
 

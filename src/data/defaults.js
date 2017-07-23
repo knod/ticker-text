@@ -19,6 +19,7 @@
 	// var TTDefaults = function () {
 
 		var tDef = {
+			misc: { playOnOpen: false },
 			delayer: {
 				// ==== word delays ====
 				wpm: 			250,

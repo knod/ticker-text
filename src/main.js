@@ -14,6 +14,7 @@
 			Emitter: 	require( 'wolfy87-eventemitter' ),
 			State: 		require( './data/state.js' 		),
 			Parser: 	require( './parse/parser.js' 	),
+			Player: 	require( '@knod/playback' ),
 			UI: 		require( './ui/core-ui.js' 	)
 		},
 		ui: {
