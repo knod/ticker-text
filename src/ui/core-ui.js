@@ -23,7 +23,7 @@
 (function (root, uiFactory) {  // root is usually `window`
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
-        define( [ 'jquery', '@knod/playback' ], function ( jquery ) { return ( root.TTCoreUI = uiFactory( jquery ) ); });
+        define( [ 'jquery' ], function ( jquery ) { return ( root.TTCoreUI = uiFactory( jquery ) ); });
     } else if (typeof module === 'object' && module.exports) {
         // Node. Does not work with strict CommonJS, but only CommonJS-like
         // environments that support module.exports, like Node.
@@ -101,7 +101,7 @@
 		tCui.triggerTriggerable = function ( ourFuncName, theirFuncName ) {
 			for ( var trigID in tCui._toTrigger ) {
 				let obj = tCui._toTrigger[ trigID ]
-				if ( obj[ theirFuncName ] ) obj[ theirFuncName ]();
+				if ( obj[ theirFuncName ] ) { console.log( 'triggering', theirFuncName, 'in', obj ); obj[ theirFuncName ](); }
 			};
 			// Important note: This object always updates last. May matter.
 			if ( ourFuncName ) { tCui[ ourFuncName ](); }
@@ -128,6 +128,11 @@
 			// return tCui;
 			return tCui.triggerTriggerable( 'show', 'open' );
 		};
+
+		tCui.loadData = function ( stepper ) {
+			tCui.playbackUI.loadPlayer( stepper );
+			return tCui;
+		};  // End tCui.loadData()
 
 		tCui.start = function () {
 			// tCui.show();
@@ -230,7 +235,7 @@
 					else { width = userWidth; }
 				}
 
-				console.log( 'DOMWidth:', DOMWidth, '; userWidth:', userWidth, '; final width:', width );
+				// console.log( 'DOMWidth:', DOMWidth, '; userWidth:', userWidth, '; final width:', width );
 
 				// Update the size of the elements
 				var elem = tCui.nodes.textElements,
@@ -421,7 +426,9 @@
 			for ( let key in constructors ) {
 				let Constr = constructors[ key ];
 				if ( typeof Constr === 'function' ) {
-					new Constr( state, tCui, constructors, filepaths );
+					var obj = new Constr( state, tCui, constructors, filepaths );
+					tCui[ obj.id ] = obj;
+					console.log( obj );
 				}
 			}
 

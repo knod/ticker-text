@@ -41,11 +41,12 @@
 		var ttxt = {};
 		ttxt.id = 'tickerText';
 
-		var startingNew = true;
+		// var startingNew = true;
 
+		var state;
 		ttxt.storage, ttxt.state, ttxt.ui;
 
-		ttxt._afterLoad = function ( oldSettings ) {
+		ttxt._afterLoad = function ( oldSettings, callback ) {
 
 			var top = constructors.topLevel;
 
@@ -56,24 +57,13 @@
 			ttxt.ui 			= new top.UI( ttxt.state, document.body, constructors.ui, filepaths.ui );
 			ttxt.ui.owner 		= ttxt;
 
-			// TEMP (For less annoying dev for now)
-			ttxt.processFullPage();
-			ttxt.readFullPage();
+			// // TEMP (For less annoying dev for now)
+			// ttxt.readFullPage();
+			// ttxt.readFullPage();
+			callback();
 
 		};  // End ttxt._afterLoad()
 
-
-		ttxt._init = function () {
-
-			var top = constructors.topLevel;
-
-			ttxt.storage = new top.Storage();
-
-			ttxt.state = new top.State( ttxt.storage, top.Emitter, true );
-			ttxt.state.loadAll( ttxt._afterLoad );
-
-			return ttxt;
-		};  // End ttxt._init
 
 
 		// ==============================
@@ -85,9 +75,9 @@
 			ttxt.ui.close();
 		};
 		ttxt.open = function () {
+			ttxt.ui.wait();  // Will be hidden/unwaited elsewhere when ready
+			if ( !ttxt.state.isOpen ) { ttxt.ui.open(); }
 			ttxt.state.isOpen = true;
-			ttxt.ui.wait();  // Will be hidden elsewhere
-			ttxt.ui.open();
 		};
 
 
@@ -106,62 +96,87 @@
 			ttxt.state.emitter.trigger( 'playTT', [ ttxt, ttxt.state ] );
 			ttxt.ui.play();
 
-			startingNew = false;
+			// startingNew = false;
 
 			return ttxt;
 		};
 
 
-		ttxt.process = function ( node ) {
+		ttxt.parseAndProcess = function ( node, processingType ) {
 			var sentenceWords = ttxt.parser.parse( node, false );
 
 			if ( ttxt.parser.debug ) {  // Help non-coder devs identify some bugs
 				console.log('~~~~~parse debug~~~~~ If any of those tests failed, the problem isn\'t with Ticker Text, it\'s with one of the other libraries. That problem will have to be fixed later.');
 			}
+			// startingNew = true;
+			return ttxt.state.process( sentenceWords, processingType );
+		};  // End ttxt.parseAndProcess()
 
-			startingNew = true;
-
-			return ttxt.state.process( sentenceWords );
-		};
-
-
-		ttxt.processSelectedText = function () {
-			var contents = document.getSelection().getRangeAt(0).cloneContents();
-			var $container = $('<div></div>');
-			$container.append(contents);
-			// if ( !ttxt.state.isOpen ) { ttxt.ui.open(); }
-			// // Always start reading right away
-			// ttxt.read( $container[0] );
-
-			return ttxt.process( $container[0] );
-		};
-
-
-		ttxt.processFullPage = function () {
-			var $clone = $('html').clone();
-			// // First time opens, when open, starts reading (customizable so can start right away?)
-			// if ( !ttxt.state.isOpen ) { ttxt.ui.open(); }
-			// else { ttxt.read( $clone[0] ); }
-
-			return ttxt.process( $clone[0] );
-		};
-
-
-		ttxt.readSelectedText = function () {
-			if ( !ttxt.state.isOpen ) { ttxt.open(); }
-			// Always start reading right away
+		ttxt.loadAndRead = function ( processingType ) {
+			console.log( 'loading', state.cached, state.processedType, state.cached[ processingType ].stepper );
+			ttxt.ui.loadData( state.cached[ processingType ].stepper );
 			ttxt.read();
-
 			return ttxt;
-		};
+		};  // End txt.loadAndRead()
 
 
 		ttxt.readFullPage = function () {
-			// First time opens. When open, starts reading
-			// TODO: ??: customizable so can start right away?
-			if ( !ttxt.state.isOpen ) { ttxt.open(); }
-			// else { ttxt.read(); }
 
+			// if ( !ttxt.state.isOpen ) { ttxt.ui.open(); }
+			// var $clone = $('html').clone();
+
+			if ( !state.cached[ 'fullPage' ] ) {
+				// TODO: Save position in text
+				ttxt.parseAndProcess( $('html').clone(), 'fullPage' );
+			}
+			// // // First time opens, when open, starts reading (customizable so can start right away?)
+			// if ( !ttxt.state.isOpen ) {
+			// 	ttxt.ui.open();
+			// 	if ( state.misc.playOnOpen ) { ttxt.read(); }
+			// }
+			// else { ttxt.read( $clone[0] ); }
+
+			if ( !ttxt.state.isOpen ) {
+				ttxt.open();
+				if ( state.misc.playOnOpen ) { ttxt.loadAndRead( 'fullPage' ); }
+			}
+			else { ttxt.loadAndRead( 'fullPage' ); }
+			
+			// ttxt.parseAndProcess( state.cached[ 'fullPage' ], 'fullPage' );
+
+			return  ttxt;
+		};
+
+		// ttxt.readFullPage = function () {
+		// 	// First time opens. When open, starts reading
+		// 	// TODO: ??: customizable so can start right away?
+		// 	if ( !ttxt.state.isOpen ) { ttxt.open(); }
+		// 	else { ttxt.read(); }
+		// 	return ttxt;
+		// };
+
+
+		// ttxt.processSelectedText = function ( processingType ) {
+		// 	var contents = document.getSelection().getRangeAt(0).cloneContents();
+		// 	var $container = $('<div></div>');
+		// 	$container.append(contents);
+		// 	// if ( !ttxt.state.isOpen ) { ttxt.ui.open(); }
+		// 	// // Always start reading right away
+		// 	// ttxt.read( $container[0] );
+
+		// 	return ttxt.parseAndProcess( $container[0], 'selectedText' );
+		// };
+
+		ttxt.readSelectedText = function () {
+			var contents = document.getSelection().getRangeAt(0).cloneContents();
+			var $container = $('<div></div>');
+			$container.append(contents);
+			// Do do: load stepper before processing
+			ttxt.parseAndProcess( $container[0], 'selectedText' );
+
+			if ( !ttxt.state.isOpen ) { ttxt.open(); }
+			// Always start reading right away
+			ttxt.loadAndRead( 'selectedText' );
 			return ttxt;
 		};
 
@@ -180,20 +195,44 @@
 			// Don't show at start, only when prompted
 			// else 
 			if ( action === 'openTickerText' ) {
-				if ( ttxt.state === undefined || !ttxt.state.isOpen ) {
-					// ttxt._init();  // TEMP
-					// ttxt.ui.open();
-					ttxt.processFullPage();
-				// } else {
-				// 	// ttxt.processFullPage();
+
+				if ( ttxt.state === undefined ) {
+					ttxt._init( function openAndProcess() {
+						ttxt.readFullPage();
+					});  // TEMP
+					// ttxt.readFullPage();
+				} else 
+
+				// if ( ttxt.state.processed !== 'fullPage' ) {
 					ttxt.readFullPage();
-				}
+				// }
+
+				// if ( ttxt.state.processed === 'fullPage' ) {
+				// 	ttxt.readFullPage();
+				// }
+			} else if ( action === 'readSelectedText' ) {
+				ttxt.readSelectedText();
 			}
 
 		});  // End extension event listener
 
-		// TEMP so it's less annoying when starting each time
-		ttxt._init();
+
+		ttxt._init = function ( callback ) {
+
+			var top = constructors.topLevel;
+
+			ttxt.storage = new top.Storage();
+
+			state = ttxt.state = new top.State( ttxt.storage, top.Emitter, true );
+			ttxt.state.loadAll( function afterLoading( oldSettings ) {
+				ttxt._afterLoad( oldSettings, callback );
+			});
+
+			return ttxt;
+		};  // End ttxt._init
+
+		// // xxx TEMP so it's less annoying when starting each time
+		// ttxt._init();
 
 		// To be used in a script
 		return ttxt;

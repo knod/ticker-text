@@ -96,6 +96,22 @@
 			return tPUI;
 		};
 
+		// Not sure of this...
+		tPUI.loadPlayer = function ( stepper ) {
+			console.log( 'loading in player:', stepper );
+			tPUI.player._stepper = stepper;
+			console.log( 'same stepper?:', tPUI.player._stepper );
+			return tPUI;
+		};  // End tPUI.loadPlayer()
+
+		// tPUI.savePlayer = function ( stepper ) {
+		// 	console.trace( 'saving player', state.cached, state.proccessedType );
+		// 	if ( state.cached[ state.proccessedType ] ) {
+		// 		state.cached[ state.proccessedType ].stepper = tPUI.player._stepper;
+		// 	}
+		// 	return tPUI;
+		// };
+
 		// -- iterable -- \\
 		tPUI.open = function () {
 			tPUI.isOpen = true;
@@ -108,9 +124,10 @@
 			 tPUI._setInitialValues();
 			$(playPauseFeedback).hide();
 
-			// TODO: If setting configured to do so, start playing on open
-			if ( state.playback.playOnOpen ) { tPUI.play( true ); }
-			else { tPUI.pause( true ); }
+			// // TODO: If setting configured to do so, start playing on open
+			// if ( state.pxlayback.pxlayOnOpen ) { tPUI._showPlay( true ); }
+			// else { tPUI._showPause( true ); }
+			tPUI._showPause( true );
 
 			return tPUI;
 		};
@@ -179,7 +196,7 @@
 		};  // End tPUI._shouldShow()
 
 
-		tPUI.play = function ( doShow ) {
+		tPUI._showPlay = function ( doShow ) {
 			// console.log( 'play called' );
 			// For scrubber bar when something new is processed
 			// TODO: ??: Give `player` a 'processBegin' and 'processFinish'?
@@ -197,7 +214,7 @@
 			return tPUI;
 		};
 
-		tPUI.pause = function ( doShow ) {
+		tPUI._showPause = function ( doShow ) {
 			// console.log( 'pause called' );
 			var shouldShow = tPUI._shouldShow();
 			if ( doShow === true || shouldShow ) {
@@ -220,6 +237,11 @@
 			return tPUI;
 		};
 
+		tPUI.play = function () {
+			tPUI.player.play();
+			return tPUI;
+		};  // End tPUI.play()
+
 
 		tPUI._rewindSentence = function () {
 			tPUI.player.prevSentence();
@@ -232,6 +254,7 @@
 		var whiteSpaceRegexp = /[\n\r\s]/;
 		var paragraphSymbol  = '';
 		tPUI._showNewFragment = function ( evnt, player, fragment ) {
+			console.log( 'which player?', fragment, player );
 			var chars = fragment;
 			// Adds pauses for line breaks
 			// TODO: Deal with line breaks in player instead? Or state?
@@ -256,6 +279,8 @@
 
 
 		tPUI._setInitialValues = function () {
+			// TODO: Deal with a situation where only one word is selected, which
+			// causes an error for noUi that min and max are the same
 			progressNode.noUiSlider.updateOptions({
 				range: { min: 0, max: ( tPUI.player.getLength() - 1 ) }
 			});
@@ -357,8 +382,8 @@
 
 		tPUI._addEvents = function () {
 			// Timer events
-			state.emitter.on( 'playBegin', tPUI.play );
-			state.emitter.on( 'pauseFinish', tPUI.pause );
+			state.emitter.on( 'playBegin', tPUI._showPlay );
+			state.emitter.on( 'pauseFinish', tPUI._showPause );
 			// state.emitter.on( 'startFinish', tPUI._start );
 			state.emitter.on( 'newWordFragment', tPUI._showNewFragment );
 			state.emitter.on( 'progress', tPUI._showProgress );
@@ -386,17 +411,25 @@
 
 		tPUI._init = function () {
 
-			tPUI.player 	= new Player( state );
+			var player = tPUI.player = new Player( state );
+
 			// They don't have their own and it doesn't quite make
 			// sense to add that there, so we have to do it here.
-			tPUI.player.id 	= 'playback';
-			// no `tPUI.player.owner` - state needs this as top-most level
-			tPUI.player._stepper.id 	= 'stepper';
-			tPUI.player._stepper.owner 	= tPUI.player;
-			tPUI.player._delayer.id 	= 'delayer';
-			tPUI.player._delayer.owner 	= tPUI.player;
+			player.id = 'playback';
+			// no `player.owner` - state needs this as top-most level
+			player._stepper.id 		= 'stepper';
+			// player._stepper.owner 	= player;  // causes infinite loop when cloning/extending
+			player._delayer.id 		= 'delayer';
+			// player._delayer.owner 	= player;  // causes infinite loop when cloning/extending
 
-			state.setProcess( tPUI.player.process );
+			state.setProcess( function playbackUIProcessAndSave() {
+				player.process.apply( player, arguments );  // just returns player
+				// tPUI.savePlayer( player._stepper );
+				var clone = $.extend( true, {}, player._stepper);
+				player._stepper = clone;
+				return clone;
+			});
+			// tPUI.process = player.process;
 
 
 			tPUI.modifierKeysDown = [];  // TODO: Empty non-destructively

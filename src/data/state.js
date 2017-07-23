@@ -61,13 +61,15 @@
 			browser: tempB,
 			defaults: defaults,
 			// settings: {}, // { stepper: {}, delayer: {}, playback: {} }
-			stepper: {}, delayer: {}, playback: {},
+			stepper: {}, delayer: {}, playback: {}, misc: {},
 			// getters: {
 			// 	delays: delayNormer,  // ui settings name
 			// 	stepper: stepperNormer,
 			// 	playback: {}
 			// },
 			isOpen: false,
+			processedType: null,
+			cached: {},
 			index: 0,  // start at beginning of text
 			parsedText: '',  // Till this is set
 		};
@@ -180,7 +182,7 @@
 						// Use the string to set the current state value
 						// TODO: ??: Need to change from key to floats, etc?
 						let val = all[ key ];
-						console.log( 'value from loading:', key + ':', val)
+						// console.log( 'value from loading:', key + ':', val)
 						let objAndProp = ttSt.objectFromKey( key );
 						// TODO: ??: Needs validation/normalization? Wouldn't
 						// that have been taken care of when setting?
@@ -207,8 +209,22 @@
 		// Doesn't belong here, not sure wher to put it
 		// It's so we can use playback's processing without needing
 		// playback to be present at the top level
-		ttSt.setProcess = function ( func ) {
-			ttSt.process = func;
+		ttSt.setProcess = function ( processingFunc ) {
+		// processingFunc should return a stepper
+			ttSt.process = function stateProcess( data, processingType ) {
+			// `data` is parsed nodes
+				// var player = processingFunc( data );
+				// ttSt.cached[ processingType ] = {
+				// 	data: processed,
+				// 	stepper: null
+				// };
+
+				var stepper 					= processingFunc( data );  // should return a clone
+				ttSt.cached[ processingType ] 	= { stepper: stepper };
+				ttSt.processedType 				= processingType;
+				return stepper;
+			};
+			console.log( 'cached', ttSt.cached );
 			return ttSt;
 		};  // End ttSt.setProcess()
 
