@@ -121,25 +121,7 @@
 					coreSettings.coreUI.nodes.textElements.style.flexBasis 	= 'auto';
 					coreSettings.coreUI.nodes.barCenter.style.flexBasis 	= 'auto';
 
-
-					// TODO: Need to update this whenever size (viewport, font, etc.) changes
-					
-					// // get width of text element
-					// var elem = coreSettings.coreUI.nodes.textElements;
-					// console.log( 'text elements:', elem );
-					// if ( elem ) {
-					// 	var styles = window.getComputedStyle( elem.querySelector( '#__tt_text_button' ) )
-					// 	var width = parseInt( styles.width );
-					// 	var fontSize = parseInt( styles.fontSize );
-					// 	console.log( 'font size:', width );
-					// 	var elemChars = Math.floor( width / fontSize );
-					// 	console.log( elemChars );
-					// 	// Get the smaller between the element width and the user setting
-					// 	if ( elemChars <= stepState.maxNumCharacters_user ) { state.set( tAnc.stepper, { maxNumCharacters: elemChars } ); }
-					// 	else { state.set( tAnc.stepper, { maxNumCharacters: stepState.maxNumCharacters_user } ); }
-					// } else {
-					// 	state.set( tAnc.stepper, { maxNumCharacters: stepState.maxNumCharacters_user } );
-					// }
+					// TODO: This is a duplicate from core. Need to call this all from one place
 
 					// Let styles take effect, I hope... (https://stackoverflow.com/a/21043017)
 					setTimeout(function updateWidth() {
@@ -155,7 +137,7 @@
 							else { width = userWidth; }
 						}
 
-						console.log( 'DOMWidth:', DOMWidth, '; userWidth:', userWidth, '; final width:', width );
+						// console.log( 'DOMWidth:', DOMWidth, '; userWidth:', userWidth, '; final width:', width );
 
 						var elem = coreSettings.coreUI.nodes.textElements,
 							text = elem.querySelector( '#__tt_text_button' );

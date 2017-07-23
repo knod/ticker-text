@@ -49,17 +49,12 @@
 		tCui._toTrigger = {};
 
 		var originalBodyMarginTop = window.getComputedStyle( document.body ).marginTop;
-		console.log( originalBodyMarginTop );
 
 
 
 		// =========== DOM STRINGS =========== \\
 
-		var iframeStr = '<iframe id="__tt_iframe" title="Ticker Text article reader."></iframe>';
-		// var cssStr = '<link>' + coreCSSstr + '\n' + nouiCSSstr + '</link>';
-
-		var css1 = '<link rel="stylesheet" href="' + filepaths.core + '">';
-		// var css2 = '<link rel="stylesheet" href="' + filepaths.noui + '">';
+		var iframeStr 	= '<iframe id="__tt_iframe" title="Ticker Text article reader."></iframe>';
 
 		//  TODO: Change (almost) all these to id's
 		var contentStr = '<div id="__tt">\n\
@@ -110,38 +105,18 @@
 
 		tCui.close = function () {
 		// This is where everything gets closed, paused, put away
-			// tCui.hide();
-			// for ( var trigID in tCui._toTrigger ) {
-			// 	let obj = tCui._toTrigger[ trigID ]
-			// 	if ( obj.close ) obj.close();
-			// };
-			// return tCui;
 			return tCui.triggerTriggerable( 'hide', 'close' );
 		};
 
 		tCui.open = function () {
-			// tCui.show();
-			// for ( var trigID in tCui._toTrigger ) {
-			// 	let obj = tCui._toTrigger[ trigID ]
-			// 	if ( obj.open ) obj.open();
-			// };
-			// return tCui;
 			return tCui.triggerTriggerable( 'show', 'open' );
 		};
 
 		tCui.start = function () {
-			// tCui.show();
-			// for ( var trigID in tCui._toTrigger ) {
-			// 	let obj = tCui._toTrigger[ trigID ]
-			// 	if ( obj.play ) obj.play();
-			// };
-			// return tCui;
 			return tCui.triggerTriggerable( 'show', 'play' );
 		};
 
-		tCui.play = function () {
-			return tCui.triggerTriggerable( 'show', 'play' );
-		}
+		tCui.play = tCui.start;
 
 
 		tCui.show = function () {
@@ -182,35 +157,16 @@
 
 			if ( !tCui.nodes ) { return tCui; }
 
-			// var left 	= tCui.nodes.barLeft,
-			// 	right 	= tCui.nodes.barRight,
-			// 	center 	= tCui.nodes.barCenter;
-
-			// var lStyles = window.getComputedStyle( left ),
-			// 	rStyles = window.getComputedStyle( right ),
-			// 	cStyles = window.getComputedStyle( center );
-
-			// var lWidth = parseFloat( lStyles.width ),
-			// 	rWidth = parseFloat( rStyles.width );
-
-			// // This assumes that left is always bigger than right,
-			// // which is a shame, but maybe necessary so that we don't
-			// // get stuck with something tiny
-			// if ( lWidth > rWidth ) {
-			// 	right.style.width = lWidth + 'px';  // TODO: ??: How to change to `em`?
-			// }
-
 			// Works, but sometimes not till the update after the one that has the change
 			// Problem with element not being rendered yet, but no solution
 			// yet found.
 
-			// tCui.nodes.textElements.style.overflow 	= 'hidden';
 			tCui.nodes.textElements.style.flexBasis = 'auto';
 			tCui.nodes.barCenter.style.flexBasis 	= 'auto';
 			// Let styles take effect, I hope... (https://stackoverflow.com/a/21043017)
 			// Set what the max number of characters could be if based only on the DOM
 			setTimeout(function() {
-				// var styles 		= window.getComputedStyle( tCui.nodes.doc.querySelector( '#__tt_text_button' ) ),
+
 				var styles 		= window.getComputedStyle( tCui.nodes.barCenter ),
 					width 		= parseFloat( styles.width ),
 					fontSize 	= parseFloat( styles.fontSize ),
@@ -230,15 +186,13 @@
 					else { width = userWidth; }
 				}
 
-				console.log( 'DOMWidth:', DOMWidth, '; userWidth:', userWidth, '; final width:', width );
+				// console.log( 'DOMWidth:', DOMWidth, '; userWidth:', userWidth, '; final width:', width );
 
 				// Update the size of the elements
 				var elem = tCui.nodes.textElements,
 					text = elem.querySelector( '#__tt_text_button' );
 				state.set( {id: 'stepper'}, { maxNumCharacters: width } );
-				// text.style.maxWidth = width + 'em';
 				elem.style.flexBasis = width + 'em';
-				// elem.style.width = 2 + 'em';
 				tCui.nodes.barCenter.style.flexBasis = width + 'em';
 
 			}, 0);
@@ -302,10 +256,8 @@
 			// extra 'outer top' value needs to be subtracted.
 			var currentOuterHeight 	= top + newHeight + bottomDiff;
 
-			var val = currentOuterHeight + 'px'
-			$iframe[0].style.height = val;
-			// TODO: Add original margin to this as well
-			document.body.style.marginTop = val;
+			$iframe[0].style.height 	  = currentOuterHeight + 'px';
+			document.body.style.marginTop = currentOuterHeight + parseInt(originalBodyMarginTop) + 'px';
 
 
 			return tCui;
@@ -353,18 +305,15 @@
 			$iframe = $(iframeStr);
 			$iframe.prependTo( parentNode );
 
-			// DO NOT SET $iframe[0].contentWindow.location.href = ANYTHING DIFFERENT
-			// Learned that the hard way
+			// DO NOT SET $iframe[0].contentWindow.location.href to ANYTHING DIFFERENT
+			// Learned that the hard way. There was a reason, though
 
 			var iDoc = $iframe[0].contentDocument;
-			// console.log( 'iDoc', iDoc );
-			// console.log( 'iframe', $iframe[0] );
 
 			tickerText = tCui._tickerTextNode = $(contentStr)[0];
 			$(tickerText).appendTo( iDoc.body );
-			// console.log( "in body?:", tickerText );
 
-			// Styles that affect multiple levels of stuff
+			// Styles that affect the parent document
 			var styles1 	= iDoc.createElement("link");
 			styles1.href 	= browser.runtime.getURL( filepaths.core );
 			styles1.type 	= "text/css";
@@ -385,7 +334,9 @@
 			stylesSliders.rel 	= "stylesheet";
 			$(stylesSliders).appendTo( iDoc.head );
 
-			// ??: Is this useful?
+			state.doc = iDoc;
+
+			// For everyone else to access
 			tCui.nodes 	= {
 				doc: 			iDoc,
 				head: 			iDoc.head,
@@ -414,10 +365,6 @@
 			$('#__tt_iframe').remove();
 			tCui._addNodes()
 				._addEvents()
-				// // This is in the wrong place
-				// // Reconfig needed. This should construct state?
-				// // Create parent object instead?
-				// .addTriggerable( state );
 
 			for ( let key in constructors ) {
 				let Constr = constructors[ key ];

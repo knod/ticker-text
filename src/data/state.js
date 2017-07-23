@@ -191,7 +191,7 @@
 				}  // end for ( all browser-stored settings )
 
 				// console.log( 'settings after loading all:', ttSt );
-				// TODO: ??: Set defaults in local storage? Needed?
+				// TODO: ??: Set defaults in local storage? Needed? Helpful? Unhelpful?
 
 				callback( ttSt );
 

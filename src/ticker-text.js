@@ -19,6 +19,7 @@
 * 	possibly, for reading a selection as well
 * - Show saved cached selections as options that can be re-read?
 * 	Allow deletion of those?
+* - Don't initialize till button is first pressed.
 */
 
 'use strict';
@@ -56,21 +57,14 @@
 
 			var top = constructors.topLevel;
 
-			// ttxt.state 			= new top.State( ttxt.storage, top.Emitter );
 			ttxt.state.owner 	= ttxt;
 			state.parser 		= new top.Parser();
-
 			// TODO: Can we move this into just reading instead of up here?
-			// Does `.ui` need it? I think it does
-			state.player = ttxt.newPlayer( 'initial' );
-
-			// state.parser.owner 	= ttxt;
+			// Does `.ui` need it? I think it does.
+			state.player 	= ttxt.newPlayer( 'initial' );
 			state.ui 		= new top.UI( ttxt.state, document.body, constructors.ui, filepaths.ui );
-			// state.ui.owner 		= ttxt;
 
-			// // TEMP (For less annoying dev for now)
-			// ttxt.processFullPage();
-			// ttxt.readFullPage();
+			// TEMP (For less annoying dev for now)
 			ttxt.fullPage();
 
 		};  // End ttxt._afterLoad()
@@ -132,21 +126,8 @@
 
 
 		ttxt.read = function () {
-
-			// var sentenceWords = state.parser.parse( node, false );
-			// console.log( sentenceWords );
-
-			// if ( state.parser.debug ) {  // Help non-coder devs identify some bugs
-			// 	console.log('~~~~~parse debug~~~~~ If any of those tests failed, the problem isn\'t with Ticker Text, it\'s with one of the other libraries. That problem will have to be fixed later.');
-			// }
-
-			// ttxt.state.process( sentenceWords );
-			// state.ui.start();
-
 			ttxt.state.emitter.trigger( 'playTT', [ ttxt, ttxt.state ] );
 			state.ui.play();
-
-
 			return ttxt;
 		};
 
@@ -161,26 +142,6 @@
 			return player.process( sentenceWords );
 		};
 
-
-		// ttxt.processSelectedText = function () {
-		// 	var contents = document.getSelection().getRangeAt(0).cloneContents();
-		// 	var $container = $('<div></div>');
-		// 	$container.append(contents);
-		// 	// if ( !ttxt.state.isOpen ) { state.ui.open(); }
-		// 	// // Always start reading right away
-		// 	// ttxt.read( $container[0] );
-
-		// 	return ttxt.process( $container[0] );
-		// };
-
-
-		// ttxt.readSelectedText = function () {
-		// 	if ( !ttxt.state.isOpen ) { ttxt.open(); }
-		// 	// Always start reading right away
-		// 	ttxt.read();
-
-		// 	return ttxt;
-		// };
 
 		ttxt.selectedText = function () {
 
@@ -199,25 +160,6 @@
 		};  // End ttxt.selectedText()
 
 
-		// ttxt.processFullPage = function () {
-		// 	var $clone = $('html').clone();
-		// 	// // First time opens, when open, starts reading (customizable so can start right away?)
-		// 	// if ( !ttxt.state.isOpen ) { state.ui.open(); }
-		// 	// else { ttxt.read( $clone[0] ); }
-
-		// 	return ttxt.process( $clone[0] );
-		// };
-
-
-		// ttxt.readFullPage = function () {
-		// 	// First time opens. When open, starts reading
-		// 	// TODO: ??: customizable so can start right away?
-		// 	if ( !ttxt.state.isOpen ) { ttxt.open(); }
-		// 	// else { ttxt.read(); }
-
-		// 	return ttxt;
-		// };
-
 		ttxt.fullPage = function () {
 
 			// Not using `.getPlayer()` because don't want to clone the node
@@ -229,14 +171,9 @@
 				var $clone = $('html').clone();
 				ttxt.process( $clone[0], player );
 
-			} else {
-				player = state.cached[ 'fullPage' ];
-			}
+			} else { player = state.cached[ 'fullPage' ]; }
 
 			state.player = player;
-
-			// console.log( 'player:', player, state.cached, state.ui.playbackUI.player );
-			// console.log( player === state.ui.playbackUI.player );
 
 			if ( !ttxt.state.isOpen ) {
 				ttxt.open();
@@ -258,23 +195,11 @@
 
 			var action = request.action;
 
-			console.log( '~~~~~~~~~~~~~~~~', action );
-
-			// if ( action === 'readSelectedText' ) { processSelectedText(); }
-
-			// Don't show at start, only when prompted
-			// else 
 			if ( action === 'openTickerText' ) {
-				// if ( ttxt.state === undefined || !ttxt.state.isOpen ) {
-					// ttxt._init();  // TEMP
-					// state.ui.open();
-					// ttxt.processFullPage();
-				// } else {
-				// 	// ttxt.processFullPage();
-					// ttxt.readFullPage();
-					ttxt.fullPage();
-				// }
-			} else if ( action === 'readSelectedText' ) { ttxt.selectedText(); }
+				ttxt.fullPage();
+			} else if ( action === 'readSelectedText' ) {
+				ttxt.selectedText();
+			}
 
 		});  // End extension event listener
 

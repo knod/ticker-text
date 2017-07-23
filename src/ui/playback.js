@@ -108,6 +108,8 @@
 			 tPUI._setInitialValues();
 			$(playPauseFeedback).hide();
 
+			textButton.focus();
+
 			// // TODO: If setting configured to do so, start playing on open
 			// if ( state.misc.playOnOpen ) { tPUI._showPlay( true ); }
 			// else { tPUI._showPause( true ); }
@@ -116,7 +118,7 @@
 		};
 		tPUI.play = function () {
 			state.player.play();
-			// TODO: tPUI._showPlay( true ); // (how to do the same with pause on open...?)
+			tPUI._showPlay( true ); // (how to do the same with pause on open...?)
 			return tPUI;
 		};
 		tPUI.close = function () {
