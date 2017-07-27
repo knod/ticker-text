@@ -380,6 +380,27 @@
 				}
 			}
 
+			// Convert svg files into svg nodes so their styles can
+			// be manipulated. https://stackoverflow.com/a/11978996/3791179
+			// TODO: Can browserify build those into the files somehow?
+			$(tCui.nodes.doc.body).find( 'img' ).each( function() {
+				var $img 	= $( this ),
+					imgURL 	= $img.attr( 'src' );
+
+				$.get( imgURL, function convertSVGToNode( data ) {
+					// Get the SVG tag, ignore the rest
+					var $svg = $( data ).find( 'svg' );
+
+					console.log( $svg );
+					if ( $svg ) {
+						// Remove any invalid XML tags as per http://validator.w3.org
+						$svg = $svg.removeAttr( 'xmlns:a' );
+						// Replace image with new SVG
+						$img.replaceWith( $svg );
+					}
+				}, 'xml' );
+			});
+
 			// This should not be visible until it's .show()n
 			$iframe.hide();
 			// $(tickerText).hide( 0, tCui.update )  // breaks things?

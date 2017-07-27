@@ -206,21 +206,22 @@
 
 		// ==== RUNTIME LOADING ====
 		ttSt.cache = function ( player, id ) {
+			// TODO: Just cache text and position so it can be stored on the browser
 			ttSt.cached[ id ] = player;
 			return ttSt;
 		};  // End ttSt.cache()
 
 
 
-		// ==== UNFORTUNATE ====
+		// // ==== UNFORTUNATE ====
 
-		// Doesn't belong here, not sure wher to put it
-		// It's so we can use playback's processing without needing
-		// playback to be present at the top level
-		ttSt.setProcess = function ( func ) {
-			ttSt.process = func;
-			return ttSt;
-		};  // End ttSt.setProcess()
+		// // Doesn't belong here, not sure where to put it
+		// // It's so we can use playback's processing without needing
+		// // playback to be present at the top level
+		// ttSt.setProcess = function ( func ) {
+		// 	ttSt.process = func;
+		// 	return ttSt;
+		// };  // End ttSt.setProcess()
 
 
 

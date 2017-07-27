@@ -417,8 +417,7 @@
 			state.player._delayer.id 	= 'delayer';
 			// state.player._delayer.owner 	= state.player;
 
-			state.setProcess( state.player.process );
-
+			// state.setProcess( state.player.process );
 
 			tPUI.modifierKeysDown = [];  // TODO: Empty non-destructively
 			tPUI.sentenceModifierKey = 18;  // 'alt' TODO: Modifiable?
