@@ -19,11 +19,10 @@
   cursor: pointer;
 }
 
-#__tt button,
-#__tt label,
+/*#__tt button,*/
+/*#__tt label,*/
 #__tt input {
   /* font defaults from chrome inspection */
-  font-family: 'droid', serif;
   font-size: 16px;
 /*  line-height: normal;
   font-style: normal;
@@ -36,12 +35,22 @@
   text-transform: none;*/
 }
 
+/* TODO: */
+.__tt_menu_button {}
+
 #__tt .__tt-big-menu-button {
   width: 3em;
   height: 3em;
   /* default followed by desired setting */
   margin: 0;
+}
+
+#__tt #__tt_bar_left .__tt-big-menu-button {
   margin-right: .3em;
+}
+
+#__tt #__tt_bar_right .__tt-big-menu-button {
+  margin-left: .3em;
 }
 
 .__tt-sup-menu-button {
@@ -51,6 +60,14 @@
   width: 1.5em;
   height: 1.5em;
   margin: 0;
+}
+
+#__tt .__tt-auto-menu-button {
+  width: auto;
+  height: 1.5em;
+  margin: 0;
+  margin-right: .3em;
+  margin-bottom: .3em;
 }
 
 /* Solution to transition? https://stackoverflow.com/questions/3508605/how-can-i-transition-height-0-to-height-auto-using-css#8331169 */

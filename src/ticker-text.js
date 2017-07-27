@@ -63,6 +63,10 @@
 			// Does `.ui` need it? I think it does.
 			state.player 	= ttxt.newPlayer( 'initial' );
 			state.ui 		= new top.UI( ttxt.state, document.body, constructors.ui, filepaths.ui );
+console.log(state.ui.nodes);
+			state.ui.nodes.readFullArticle.addEventListener( 'click', function DOMReadFullArticle() {
+				ttxt.clickHandler( 'readFullArticle' );
+			});
 
 			// TEMP (For less annoying dev for now)
 			ttxt.fullPage();
@@ -186,24 +190,29 @@
 		};  // End ttxt.fullPage()
 
 
-		// ==============================
-		// EXTENSION EVENT LISTENER
-		// ==============================
-		var browser = chrome || browser;
-
-		browser.extension.onMessage.addListener( function ( request, sender, sendResponse ) {
-
-			var action = request.action;
-
-			if ( action === 'openTickerText' ) {
+		ttxt.clickHandler = function ( action ) {
+			if ( action === 'openTickerText' || action === 'readFullArticle' ) {
 				ttxt.fullPage();
 			} else if ( action === 'readSelectedText' ) {
 				ttxt.selectedText();
 			}
+		};  // ttxt.clickHandler()
 
+
+		// ==============================
+		// EXTENSION EVENT LISTENER (DOM is above with ui)
+		// ==============================
+
+		var browser = chrome || browser;
+
+		browser.extension.onMessage.addListener( function ( request, sender, sendResponse ) {
+			ttxt.clickHandler( request.action );
 		});  // End extension event listener
 
+
+
 		// TEMP so it's less annoying when starting each time
+		// TODO: Only do this when needed
 		ttxt._init();
 
 		// To be used in a script

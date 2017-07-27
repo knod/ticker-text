@@ -14,6 +14,7 @@
 * - Save progress in state or something
 * - click on 'timer' pauses, lift off plays if was playing
 * - Resume playing after rewind, etc., if needed
+* - Organize into `state` events and dom events
 */
 
 'use strict';
@@ -59,7 +60,7 @@
 		var indicator, textButton, loading;
 		var playPauseFeedback, playFeedback, pauseFeedback;
 		var controls;  // We'll see how this one shapes up
-		var rewindSentence;
+		var rewindSentence, readFullArticle;
 
 		var progStr = '<div id="__tt_progress"></div>';
 
@@ -86,6 +87,9 @@
 		var rewindSentenceStr = '<button id="__tt_rewind-sentence" class="__tt-big-menu-button">\
 	<img src="' + rewPath + '"></img>\
 </button>';
+
+		var fullArticlePath = browser.extension.getURL('images/full-article.svg');
+		var fullArticleStr 	= '<img src="' + fullArticlePath + '"></img>';
 
 
 
@@ -419,22 +423,24 @@
 			tPUI.modifierKeysDown = [];  // TODO: Empty non-destructively
 			tPUI.sentenceModifierKey = 18;  // 'alt' TODO: Modifiable?
 
-			progressNode = nodes.progressNode = $(progStr)[0];
+			progressNode = nodes.progressNode = $( progStr )[0];
 
-			indicator = nodes.indicator = $(indicatorStr)[0];
+			indicator = nodes.indicator = $( indicatorStr )[0];
 			// ??: Should this really be a button? How do the rest of the controls fit into this?
 			// ??: Should there just be an invisible set of controls that accessible aids can grab hold of
-			textButton 	= nodes.textButton 	= $(textButtonStr)[0];
-			loading 	= nodes.loading 	= $(loadingStr)[0];
+			textButton 	= nodes.textButton 	= $( textButtonStr )[0];
+			loading 	= nodes.loading 	= $( loadingStr )[0];
 
-			playPauseFeedback 	= nodes.playPauseFeedback 	= $(feedbackStr)[0];
-			playFeedback 		= nodes.playFeedback  		= $(playPauseFeedback).find('#__tt_play_feedback')[0];
-			pauseFeedback 		= nodes.pauseFeedback 		= $(playPauseFeedback).find('#__tt_pause_feedback')[0];
+			playPauseFeedback 	= nodes.playPauseFeedback 	= $( feedbackStr )[0];
+			playFeedback 		= nodes.playFeedback  		= $( playPauseFeedback ).find( '#__tt_play_feedback' )[0];
+			pauseFeedback 		= nodes.pauseFeedback 		= $( playPauseFeedback ).find( '#__tt_pause_feedback' )[0];
 
 			// // Go in .tt-bar-center .tt-below?
 			// controls = nodes.controls = $(controlsStr)[0];
 
-			rewindSentence = nodes.rewindSentence = $(rewindSentenceStr)[0];
+			rewindSentence = nodes.rewindSentence = $( rewindSentenceStr )[0];
+
+			readFullArticle = nodes.readFullArticle = $( fullArticleStr )[0];
 
 			var coreNodes = coreUIObj.nodes;
 			
@@ -452,6 +458,7 @@
 			
 			$(controls).appendTo( coreNodes.bar );
 			$(rewindSentence).appendTo( coreNodes.barLeft );
+			$( readFullArticle ).appendTo( coreNodes.readFullArticle );
 
 			// STYLES
 

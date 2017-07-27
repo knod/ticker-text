@@ -69,6 +69,7 @@
 			<div id="__tt_below_text_elements"></div>\n\
 		</div>\n\
 		<div id="__tt_bar_right" class="__tt-bar-section">\n\
+			<button id="__tt_read_full_article" class="__tt-big-menu-button"></button>\n\
 			<button id="__tt_close" class="__tt-sup-menu-button">X</button>\n\
 		</div>\n\
 	</div>\n\
@@ -256,7 +257,11 @@
 			// extra 'outer top' value needs to be subtracted.
 			var currentOuterHeight 	= top + newHeight + bottomDiff;
 
+
 			$iframe[0].style.height 	  = currentOuterHeight + 'px';
+			// TODO:
+			// body position relative
+			// html margin
 			document.body.style.marginTop = currentOuterHeight + parseInt(originalBodyMarginTop) + 'px';
 
 
@@ -352,6 +357,7 @@
 				rightOfText: 	$(tickerText).find('#__tt_right_text_elements')[0],
 				belowText: 		$(tickerText).find('#__tt_below_text_elements')[0],
 				barRight: 		$(tickerText).find('#__tt_bar_right')[0],
+				readFullArticle:$(tickerText).find('#__tt_read_full_article')[0],
 				close: 			$(tickerText).find('#__tt_close')[0],
 				below: 			$(tickerText).find('#__tt_below_bar')[0]
 			}
