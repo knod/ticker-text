@@ -63,7 +63,7 @@
 			// Does `.ui` need it? I think it does.
 			state.player 	= ttxt.newPlayer( 'initial' );
 			state.ui 		= new top.UI( ttxt.state, document.body, constructors.ui, filepaths.ui );
-console.log(state.ui.nodes);
+
 			state.ui.nodes.readFullArticle.addEventListener( 'click', function DOMReadFullArticle() {
 				ttxt.clickHandler( 'readFullArticle' );
 			});

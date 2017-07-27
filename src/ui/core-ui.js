@@ -257,11 +257,12 @@
 			// extra 'outer top' value needs to be subtracted.
 			var currentOuterHeight 	= top + newHeight + bottomDiff;
 
+			$iframe[0].style.height = currentOuterHeight + 'px';
 
-			$iframe[0].style.height 	  = currentOuterHeight + 'px';
-			// TODO:
-			// body position relative
-			// html margin
+			// body position relative so everything moves down properly
+			// (google search result pages don't even seem to get it right)
+			document.body.style.position = 'relative';
+			// html margin or padding too? Is that possible?
 			document.body.style.marginTop = currentOuterHeight + parseInt(originalBodyMarginTop) + 'px';
 
 
