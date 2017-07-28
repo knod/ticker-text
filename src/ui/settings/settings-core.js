@@ -3,6 +3,7 @@
 * Should manage settings input. Extendable (I hope).
 * 
 * TODO:
+* - Add buttons for input elements back in (check CSS?)
 * ??: Add events/buttons for things like opening and closing settings?
 * - ??: Don't close settings when closing tickerText? If they were there
 * 	on close, should they be there on re-open?
@@ -208,11 +209,11 @@
 			coreUI.addTriggerable( tSet );
 			tSet.coreUI = coreUI;
 
+			// Do these individually so can control order
+			// Don't want to add ES6 shim for Map
 			var constructors = uiConstructors.settings;
-			for ( var key in constructors ) {
-				let Constr = constructors[ key ];
-				new Constr( state, tSet, constructors, filepaths );
-			}
+			tSet.appearance = new constructors[ 'Appearance' ]( state, tSet, constructors, filepaths );
+			tSet.delays 	= new constructors[ 'Delays' ]( state, tSet, constructors, filepaths );
 
 			return tSet;
 		};
