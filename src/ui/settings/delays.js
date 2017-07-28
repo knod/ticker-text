@@ -91,6 +91,8 @@
 			// We're kind of doing normalization/constraining here with min and
 			// max, but we're also doing it with setting/getting in state.
 			// TODO: Consolidate normalizing/constraining
+			// TODO: I believe the input boxes are not normalizing themselves. File
+			// issue on noUiSlider?
 			data.sliderNode.noUiSlider.on( 'update', function( values, handle ) {
 				var val = parseFloat( values[ handle ] );
 				data.inputNode.value = val;

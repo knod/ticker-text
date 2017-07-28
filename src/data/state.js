@@ -11,6 +11,8 @@
 * 	this is a good reason to not get directly from browser storage
 * 	- these limitations would prevent view from being updated
 * 	correctly)
+* - Add a 'profile_#' or something and save each set of adjusted
+* 	values if they're saved.
 * 
 * NOTES:
 * - When you save a setting it normalizes your value and returns
@@ -58,20 +60,15 @@
 			keyPrefix: 'tickerText_',
 			_debug: debug || false,
 			emitter: new Emitter(),
-			browser: tempB,
 			defaults: defaults,
-			// settings: {}, // { stepper: {}, delayer: {}, playback: {} }
 			misc: {}, stepper: {}, delayer: {}, playback: {},
-			// getters: {
-			// 	delays: delayNormer,  // ui settings name
-			// 	stepper: stepperNormer,
-			// 	playback: {}
-			// },
+			browser: tempB,
 			cached: {},
 			player: null,
 			isOpen: false,
-			index: 0,  // start at beginning of text
-			parsedText: '',  // Till this is set
+			// TODO:
+			// index: 0,  // start at beginning of text
+			// parsedText: '',  // Till this is set
 		};
 
 
@@ -80,7 +77,6 @@
 
 		ttSt.buildKey = function ( sender, key ) {
 			var key = ttSt.keyPrefix + sender.id + '_' + key;
-			// for ( let key in keyValPair ) {}
 			return key;
 		};  // End ttSt.buildKey()
 
@@ -107,23 +103,27 @@
 		// Probably nothing outside here should be calling this
 		// Things outside of here should just be using the state values.
 		// ttSt.get = function ( sender, key, callback ) {
-		ttSt.get = function ( sender, key ) {
+		ttSt.get = function ( sender, key, callback ) {
 			// TODO: Do the same thing as with loadAll?
 			// TODO: ??: Use callback at all? That only returns local storage value
 			// and may mix things up
 			// TODO: ??: _only_ use callback, matching up with `.loadAll()` and others?
 			// storage.get( keyOrKeys, callback );
+
 			var val = ttSt[ sender.id ][ key ];
+			callback( key, val, ttSt[ sender.id ] );
 
 			return val;
 		};  // End ttSt.get()
 
 
 		// `sender` won't work - the UI is the sender, not the original state object
+		// Have to do weird stuff to make sure the right id gets through
+		// Maybe change to 'key' or 'container id' or something...
 		ttSt.set = function ( sender, toSet, callback ) {
 		// Objects with 'settable' values only go one level deep
 
-			// TODO: ??: Update `_baseDelay` each time? Have ones that need updating each time?
+			// TODO: ??: Update `_baseDelay` each time? Have other ones that need updating each time?
 			// ??: Recalculate in delayer itself? (probably a better idea - whenever accessing base delay)
 
 			var stateObj = ttSt[ sender.id ];
@@ -174,8 +174,6 @@
 				// For every key in local storage
 				for ( let key in all ) {
 
-					// console.log( 'testing key:', key, key.indexOf( ttSt.keyPrefix ) );
-
 					// if it starts with 'tickerText_'
 					if ( key.indexOf( ttSt.keyPrefix ) !== -1 ) {
 
@@ -191,7 +189,9 @@
 				}  // end for ( all browser-stored settings )
 
 				// console.log( 'settings after loading all:', ttSt );
-				// TODO: ??: Set defaults in local storage? Needed? Helpful? Unhelpful?
+
+				// NOT setting defaults in local storage so can be more easily
+				// adjusted if defaults are changed in future
 
 				callback( ttSt );
 

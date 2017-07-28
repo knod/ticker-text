@@ -9,13 +9,12 @@
 * - name - TTBar? TTSee?
 * 
 * TODO:
-* - Consider prepending main element as opposed to appending it. Possibly
-* 	easer for screen readers/tabing to find more quickly (so the controls
-* 	can be accessed more quickly). Though now it's an iframe, so how does
-* 	that work for accessibility...? Maybe set up some tab-able controls
-* 	that are invisibile that are outside of the iframe...
-* - Re-fetch word on view update in case the word is now to long for the
-* 	viewport.
+* - Consider setting up some tab-able controls (that are invisible?)
+* 	that are outside of the iframe so they can be accessed by
+* 	keypresses even when the document has been clicked on already -
+* 	can't be navigated to with tab if in main document (I believe)
+* - Re-fetch word on view update in case the word is now too long for the
+* 	viewport. (Doing this, but not reliably)
 */
 
 'use strict';
@@ -173,8 +172,6 @@
 					fontSize 	= parseFloat( styles.fontSize ),
 					elemChars 	= Math.floor( width / fontSize );
 				state.set( { id: 'stepper' }, { widthByEm: elemChars } );
-
-
 
 				var DOMWidth 	= state.stepper.widthByEm,
 					userWidth 	= state.stepper.maxNumCharacters_user,
@@ -390,8 +387,6 @@
 				$.get( imgURL, function convertSVGToNode( data ) {
 					// Get the SVG tag, ignore the rest
 					var $svg = $( data ).find( 'svg' );
-
-					console.log( $svg );
 					if ( $svg ) {
 						// Remove any invalid XML tags as per http://validator.w3.org
 						$svg = $svg.removeAttr( 'xmlns:a' );

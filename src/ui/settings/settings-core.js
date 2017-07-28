@@ -206,7 +206,6 @@
 				._addEvents();
 
 			coreUI.addTriggerable( tSet );
-
 			tSet.coreUI = coreUI;
 
 			var constructors = uiConstructors.settings;

@@ -9,7 +9,6 @@
 
 	var constructors = {
 		topLevel: {
-			// TODO: These next:
 			Storage: 	require( './data/storage.js' 	),
 			Emitter: 	require( 'wolfy87-eventemitter' ),
 			State: 		require( './data/state.js' 		),

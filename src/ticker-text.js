@@ -111,7 +111,8 @@
 		};  // End ttxt.newPlayer()
 
 
-		ttxt.getPlayer = function ( id, $node ) {
+		ttxt.savePlayer = function ( id, $node ) {
+			// TODO: ??: Recieve node or selector, allowing cloning in here if needed?
 
 			var player = null;
 			if ( !state.cached[ id ] ) {
@@ -126,7 +127,7 @@
 			state.player = player;
 
 			return player;
-		};  // End ttxt.getPlayer()
+		};  // End ttxt.savePlayer()
 
 
 		ttxt.read = function () {
@@ -154,7 +155,7 @@
 			$container.append(contents);
 			var id = $container.text();
 
-			var player = ttxt.getPlayer( id, $container );
+			var player = ttxt.savePlayer( id, $container );
 
 			if ( !ttxt.state.isOpen ) { ttxt.open(); }
 			// When reading selected text, always read right away
@@ -166,7 +167,7 @@
 
 		ttxt.fullPage = function () {
 
-			// Not using `.getPlayer()` because don't want to clone the node
+			// Not using `.savePlayer()` because don't want to clone the node
 			// each time. How much memory would it use? (thinking of mobile)
 			var player = null;
 			if ( !state.cached[ 'fullPage' ] ) {

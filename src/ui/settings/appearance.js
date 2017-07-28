@@ -40,7 +40,6 @@
 		var nodes 	 = tAnc._nodes;
 
 		nodes.minLengthForSeparator = null;
-		// TODO: Must calculate, somewhere, using user setting and width of space available
 		nodes.maxNumChars = null;
 
 
@@ -71,10 +70,7 @@
 
 			var callback = data.callback || function(){};
 
-			// TODO: ??: These should set themselves to normalized values at end?
-			// We're kind of doing normalization/constraining here with min and
-			// max, but we're also doing it with setting/getting in state.
-			// TODO: Consolidate normalizing/constraining
+			// Same notes as in delays.js
 			data.sliderNode.noUiSlider.on( 'update', function( values, handle ) {
 				var val = parseFloat( values[ handle ] );
 				data.inputNode.value = val;
@@ -142,7 +138,6 @@
 						var elem = coreSettings.coreUI.nodes.textElements,
 							text = elem.querySelector( '#__tt_text_button' );
 						state.set( tAnc.stepper, { maxNumCharacters: width } );
-						// text.style.maxWidth = width + 'em';
 						elem.style.flexBasis = width + 'em';
 						coreSettings.coreUI.nodes.barCenter.style.flexBasis = width + 'em';
 

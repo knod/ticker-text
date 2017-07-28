@@ -10,10 +10,7 @@
 * - ??: How to prevent play/pause flashes when not wanted? Maybe
 * 	default `player` shouldn't fire playBegin, etc. if already
 * 	playing, etc?
-* - ??: How to prevent double triggering on spacebar down then up?
-* - Save progress in state or something
-* - click on 'timer' pauses, lift off plays if was playing
-* - Resume playing after rewind, etc., if needed
+* - click on 'timer' pauses, lift off plays if was playing (?)
 * - Organize into `state` events and dom events
 */
 
@@ -59,7 +56,7 @@
 		var progressNode, percentDone, scrubber;
 		var indicator, textButton, loading;
 		var playPauseFeedback, playFeedback, pauseFeedback;
-		var controls;  // We'll see how this one shapes up
+		var controls;  // We'll see how this one shapes up. May need it outside the iframe
 		var rewindSentence, readFullArticle;
 
 		var progStr = '<div id="__tt_progress"></div>';
@@ -113,10 +110,7 @@
 			$(playPauseFeedback).hide();
 
 			textButton.focus();
-
-			// // TODO: If setting configured to do so, start playing on open
-			// if ( state.misc.playOnOpen ) { tPUI._showPlay( true ); }
-			// else { tPUI._showPause( true ); }
+			// TODO: Brainstorm better indicator for clicking/activating on text
 
 			return tPUI;
 		};
@@ -137,11 +131,6 @@
 		};  // End tPUI.update()
 
 		// -- non-iterable -- \\
-
-		// tPUI.loadPlayer = function ( player ) {
-		// 	state.player = player;
-		// 	return tPUI;
-		// };  // End tPUI.loadPlayer()
 
 		tPUI.hideText = function () {
 			$(textButton).addClass('__tt-hidden');
@@ -200,7 +189,7 @@
 
 
 		tPUI._showPlay = function ( doShow ) {
-			// console.log( 'play called' );
+
 			// For scrubber bar when something new is processed
 			// TODO: ??: Give `player` a 'processBegin' and 'processFinish'?
 			if ( state.player.getIndex() === 0 ) { tPUI._setInitialValues(); }
@@ -218,7 +207,7 @@
 		};
 
 		tPUI._showPause = function ( doShow ) {
-			// console.log( 'pause called' );
+
 			var shouldShow = tPUI._shouldShow();
 			if ( doShow === true || shouldShow ) {
 				$(pauseFeedback).removeClass('__tt-hidden');
@@ -230,13 +219,9 @@
 		};
 
 		tPUI._togglePlayPause = function () {
-			// console.log( '1:', state.player._currentAction, 'was toggled:', wasJustToggled );
 			state.player.revert();
-			// console.log( '2:', state.player._currentAction, 'was toggled:', wasJustToggled );
 			wasJustToggled = true;
-			// console.log( '3:', state.player._currentAction, 'was toggled:', wasJustToggled );
 			state.player.toggle();
-			// console.log( '4:', state.player._currentAction, 'was toggled:', wasJustToggled );
 			return tPUI;
 		};
 
@@ -406,18 +391,8 @@
 
 		tPUI._init = function () {
 
-			// state.player 	= new Player( state );
-			// // They don't have their own and it doesn't quite make
-			// // sense to add that there, so we have to do it here.
-			// state.player.id 	= 'playback';
-
-			// no `state.player.owner` - state needs this as top-most level
 			state.player._stepper.id 	= 'stepper';
-			// state.player._stepper.owner 	= state.player;
 			state.player._delayer.id 	= 'delayer';
-			// state.player._delayer.owner 	= state.player;
-
-			// state.setProcess( state.player.process );
 
 			tPUI.modifierKeysDown = [];  // TODO: Empty non-destructively
 			tPUI.sentenceModifierKey = 18;  // 'alt' TODO: Modifiable?
@@ -434,7 +409,7 @@
 			playFeedback 		= nodes.playFeedback  		= $( playPauseFeedback ).find( '#__tt_play_feedback' )[0];
 			pauseFeedback 		= nodes.pauseFeedback 		= $( playPauseFeedback ).find( '#__tt_pause_feedback' )[0];
 
-			// // Go in .tt-bar-center .tt-below?
+			// // Go in .tt-bar-center .tt-below? Go outside of iframe?
 			// controls = nodes.controls = $(controlsStr)[0];
 
 			rewindSentence = nodes.rewindSentence = $( rewindSentenceStr )[0];
@@ -447,7 +422,7 @@
 			// Must add it after it belongs ot the right document so nouislider
 			// is listening to the right document
 			// TODO: ??: File issue with nouislider that owner of slider should
-			// always be checked?
+			// always be checked? Still an issue?
 			tPUI._progressSlider( progressNode );
 
 			$(indicator).appendTo( coreNodes.textElements );
