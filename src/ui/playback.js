@@ -12,6 +12,8 @@
 * 	playing, etc?
 * - click on 'timer' pauses, lift off plays if was playing (?)
 * - Organize into `state` events and dom events
+* - If only one letter at a time, blink/pulse letters so double
+* 	letters are clearer.
 */
 
 'use strict';

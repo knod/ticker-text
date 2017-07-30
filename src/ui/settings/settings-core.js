@@ -211,6 +211,7 @@
 
 			// Do these individually so can control order
 			// Don't want to add ES6 shim for Map
+			// Not as flexible :/
 			var constructors = uiConstructors.settings;
 			tSet.appearance = new constructors[ 'Appearance' ]( state, tSet, constructors, filepaths );
 			tSet.delays 	= new constructors[ 'Delays' ]( state, tSet, constructors, filepaths );

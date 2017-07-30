@@ -114,8 +114,9 @@
 				operation: 	'maxNumCharacters_user',
 				callback: 	function ( stepState ) {
 
-					coreSettings.coreUI.nodes.textElements.style.flexBasis 	= 'auto';
-					coreSettings.coreUI.nodes.barCenter.style.flexBasis 	= 'auto';
+					// button will always stay full width
+					// coreSettings.coreUI.nodes.textElements.style.flexBasis 	= 'auto';
+					// coreSettings.coreUI.nodes.barCenter.style.flexBasis 	= 'auto';
 
 					// TODO: This is a duplicate from core. Need to call this all from one place
 
@@ -125,22 +126,29 @@
 						var DOMWidth 	= stepState.widthByEm,
 							userWidth 	= stepState.maxNumCharacters_user,
 							width 		= null;
+
 						// Get the smaller between the element width and the user setting
+						// Not undefined or 0
 						if ( DOMWidth && DOMWidth <= userWidth ) { width = DOMWidth; }
-						else {
-							// Give a little padding if possible
-							if ( DOMWidth >= userWidth + 2 ) { width = userWidth + 2; }
-							else { width = userWidth; }
-						}
+						else { width = userWidth; }
 
-						// console.log( 'DOMWidth:', DOMWidth, '; userWidth:', userWidth, '; final width:', width );
+						// console.log( 'core 4:', 'DOMWidth:', DOMWidth, '; userWidth:', userWidth, '; final width:', width );
 
-						var elem = coreSettings.coreUI.nodes.textElements,
-							text = elem.querySelector( '#__tt_text_button' );
-						state.set( tAnc.stepper, { maxNumCharacters: width } );
-						elem.style.flexBasis = width + 'em';
-						coreSettings.coreUI.nodes.barCenter.style.flexBasis = width + 'em';
+						// Update the number of characters
+						state.set( {id: 'stepper'}, { maxNumCharacters: width } );
 
+						// button will always stay full width
+						// var visualWidth =  width;
+						// if ( DOMWidth && DOMWidth > userWidth ) {
+						// 	// Add a little padding if possible
+						// 	// if less than 2 is remaining, keep any value, otherwise use 2
+						// 	var diff 	= DOMWidth - userWidth,
+						// 		extra 	= Math.min( 2, DOMWidth );
+						// 	visualWidth =  width + extra;
+						// }
+
+						// coreSettings.coreUI.nodes.textElements.style.flexBasis 	= visualWidth + 'em';
+						// coreSettings.coreUI.nodes.barCenter.style.flexBasis 	= visualWidth + 'em';
 					}, 0);
 				}  // End callback()
 			});
@@ -166,7 +174,7 @@
 			return $('<div id="__tt_' + idName + '_setting" class="__tt-setting">\n\
 						<label class="__tt-slider-label">' + label + '</label>\n\
 						<div class="__tt-slider-controls">\n\
-							<input id="__tt_' + idName + '_input" class="__tt-slider-input" type="text"/>\n\
+							<input id="__tt_' + idName + '_input" class="__tt-slider-input" type="number"/>\n\
 							<div id="__tt_' + idName + '_slider" class="__tt-slider"></div>\n\
 						</div>\n\
 					</div>')

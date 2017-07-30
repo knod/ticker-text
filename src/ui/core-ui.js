@@ -155,14 +155,21 @@
 
 		tCui._resizeBarElements = function () {
 
+			// TODO: resize height of button based on 100% - outline-width
+			// Just in case user has custom styles or adds custom styles
+			// (~1/2 of the border is the 'blur' width, which is outside of
+			// the border-box, but 1/2 + 1/2 = 1)
+
 			if ( !tCui.nodes ) { return tCui; }
 
 			// Works, but sometimes not till the update after the one that has the change
 			// Problem with element not being rendered yet, but no solution
 			// yet found.
 
-			tCui.nodes.textElements.style.flexBasis = 'auto';
-			tCui.nodes.barCenter.style.flexBasis 	= 'auto';
+			// button will always stay full width
+			// tCui.nodes.textElements.style.flexBasis = 'auto';
+			// tCui.nodes.barCenter.style.flexBasis 	= 'auto';
+
 			// Let styles take effect, I hope... (https://stackoverflow.com/a/21043017)
 			// Set what the max number of characters could be if based only on the DOM
 			setTimeout(function() {
@@ -176,23 +183,29 @@
 				var DOMWidth 	= state.stepper.widthByEm,
 					userWidth 	= state.stepper.maxNumCharacters_user,
 					width 		= null;
+
 				// Get the smaller between the element width and the user setting
+				// Not undefined or 0
 				if ( DOMWidth && DOMWidth <= userWidth ) { width = DOMWidth; }
-				else {
-					// Give a little padding if possible
-					if ( DOMWidth === undefined || DOMWidth >= userWidth + 2 ) { width = userWidth + 2; }
-					else { width = userWidth; }
-				}
+				else { width = userWidth; }
 
-				// console.log( 'DOMWidth:', DOMWidth, '; userWidth:', userWidth, '; final width:', width );
+				// console.log( 'core 4:', 'DOMWidth:', DOMWidth, '; userWidth:', userWidth, '; final width:', width );
 
-				// Update the size of the elements
-				var elem = tCui.nodes.textElements,
-					text = elem.querySelector( '#__tt_text_button' );
+				// Update the number of characters
 				state.set( {id: 'stepper'}, { maxNumCharacters: width } );
-				elem.style.flexBasis = width + 'em';
-				tCui.nodes.barCenter.style.flexBasis = width + 'em';
 
+				// button will always stay full width
+				// var visualWidth =  width;
+				// if ( DOMWidth && DOMWidth > userWidth ) {
+				// 	// Add a little padding if possible
+				// 	// if less than 2 is remaining, keep any value, otherwise use 2
+				// 	var diff 	= DOMWidth - userWidth,
+				// 		extra 	= Math.min( 2, DOMWidth );
+				// 	visualWidth =  width + extra;
+				// }
+
+				// tCui.nodes.textElements.style.flexBasis = visualWidth + 'em';
+				// tCui.nodes.barCenter.style.flexBasis 	= visualWidth + 'em';
 			}, 0);
 
 		};  // End tCui._resizeBarElements()

@@ -97,6 +97,7 @@ button svg {
 }
 
 #__tt #__tt_text_elements {
+	flex: 1;
 	display: flex;
 	align-items: center;
 	justify-content: center;

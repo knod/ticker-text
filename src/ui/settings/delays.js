@@ -213,7 +213,7 @@
 			return $('<div id="__tt_' + idName + '_setting" class="__tt-setting">\n\
 						<label class="__tt-slider-label">' + label + '</label>\n\
 						<div class="__tt-slider-controls">\n\
-							<input id="__tt_' + idName + '_input" class="__tt-slider-input" type="text"/>\n\
+							<input id="__tt_' + idName + '_input" class="__tt-slider-input" type="number"/>\n\
 							<div id="__tt_' + idName + '_slider" class="__tt-slider"></div>\n\
 						</div>\n\
 					</div>')

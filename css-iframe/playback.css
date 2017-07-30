@@ -33,7 +33,8 @@
 }
 #__tt_text_button {
 	width: 100%;
-	height: 90%;
+	/* to account for outline, even though outline-width is only 5px... */
+	height: calc(100% - 6px);
 	text-align: center;
 	z-index: 10;
 }
@@ -117,8 +118,6 @@
 #__tt #__tt_text_button {
     background: none;
     border: none;
-    height: 90%;
-
 	/*font-family: 'droid', serif;*/
 	font-size: 36px;
 /*	line-height: normal;
