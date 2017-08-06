@@ -20,6 +20,8 @@
 * - Show saved cached selections as options that can be re-read?
 * 	Allow deletion of those?
 * - Don't initialize till button is first pressed.
+* - ??: Read whole article DOM button should start text if the
+* 	whole article is showing?
 */
 
 'use strict';
@@ -53,6 +55,17 @@
 		ttxt.storage, ttxt.state;
 		var state;
 
+		ttxt._afterStyles = function ( state, ui ) {
+
+			ui.nodes.readFullArticle.addEventListener( 'click', function DOMReadFullArticle() {
+				ttxt.clickHandler( 'readFullArticle' );
+			});
+
+			// TEMP (For less annoying dev for now)
+			ttxt.fullPage();
+
+		};  // End ttxt._afterStyles()
+
 		ttxt._afterLoad = function ( oldSettings ) {
 
 			var top = constructors.topLevel;
@@ -62,29 +75,9 @@
 			// TODO: Can we move this into just reading instead of up here?
 			// Does `.ui` need it? I think it does.
 			state.player 	= ttxt.newPlayer( 'initial' );
-			state.ui 		= new top.UI( ttxt.state, document.body, constructors.ui, filepaths.ui );
-
-			state.ui.nodes.readFullArticle.addEventListener( 'click', function DOMReadFullArticle() {
-				ttxt.clickHandler( 'readFullArticle' );
-			});
-
-			// TEMP (For less annoying dev for now)
-			ttxt.fullPage();
+			state.ui 		= new top.UI( ttxt.state, document.body, constructors.ui, filepaths.ui, ttxt._afterStyles );
 
 		};  // End ttxt._afterLoad()
-
-
-		ttxt._init = function () {
-
-			var top = constructors.topLevel;
-
-			ttxt.storage = new top.Storage();
-
-			state = ttxt.state = new top.State( ttxt.storage, top.Emitter, true );
-			ttxt.state.loadAll( ttxt._afterLoad );
-
-			return ttxt;
-		};  // End ttxt._init
 
 
 		// ==============================
@@ -211,9 +204,20 @@
 		});  // End extension event listener
 
 
-
 		// TEMP so it's less annoying when starting each time
 		// TODO: Only do this when needed
+		ttxt._init = function () {
+
+			var top = constructors.topLevel;
+
+			ttxt.storage = new top.Storage();
+
+			state = ttxt.state = new top.State( ttxt.storage, top.Emitter, true );
+			ttxt.state.loadAll( ttxt._afterLoad );
+
+			return ttxt;
+		};  // End ttxt._init
+
 		ttxt._init();
 
 		// To be used in a script

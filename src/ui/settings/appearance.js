@@ -50,7 +50,7 @@
 		*/
 			// To keep handles within the bar
 			$(data.sliderNode).addClass('noUi-extended');
-
+			// debugger;
 			var slider = noUiSlider.create( data.sliderNode, {
 				range: { min: data.range.min, max: data.range.max },
 				start: data.startVal,
@@ -114,14 +114,13 @@
 				operation: 	'maxNumCharacters_user',
 				callback: 	function ( stepState ) {
 
-					// button will always stay full width
-					// coreSettings.coreUI.nodes.textElements.style.flexBasis 	= 'auto';
-					// coreSettings.coreUI.nodes.barCenter.style.flexBasis 	= 'auto';
-
 					// TODO: This is a duplicate from core. Need to call this all from one place
 
-					// Let styles take effect, I hope... (https://stackoverflow.com/a/21043017)
-					setTimeout(function updateWidth() {
+					// // TODO: Make this iframe body instead or something
+					// console.log( document.body.clientHeight );
+
+					// // Let styles take effect, I hope... (https://stackoverflow.com/a/21043017)
+					// setTimeout(function updateWidth() {
 
 						var DOMWidth 	= stepState.widthByEm,
 							userWidth 	= stepState.maxNumCharacters_user,
@@ -131,27 +130,15 @@
 						// Not undefined or 0
 						if ( DOMWidth && DOMWidth <= userWidth ) { width = DOMWidth; }
 						else { width = userWidth; }
-
 						// console.log( 'core 4:', 'DOMWidth:', DOMWidth, '; userWidth:', userWidth, '; final width:', width );
 
 						// Update the number of characters
 						state.set( {id: 'stepper'}, { maxNumCharacters: width } );
-
-						// button will always stay full width
-						// var visualWidth =  width;
-						// if ( DOMWidth && DOMWidth > userWidth ) {
-						// 	// Add a little padding if possible
-						// 	// if less than 2 is remaining, keep any value, otherwise use 2
-						// 	var diff 	= DOMWidth - userWidth,
-						// 		extra 	= Math.min( 2, DOMWidth );
-						// 	visualWidth =  width + extra;
-						// }
-
-						// coreSettings.coreUI.nodes.textElements.style.flexBasis 	= visualWidth + 'em';
-						// coreSettings.coreUI.nodes.barCenter.style.flexBasis 	= visualWidth + 'em';
-					}, 0);
+					// }, 0);
 				}  // End callback()
 			});
+
+			// console.log( 'slider:', nodes.maxNumChars.offsetHeight, nodes.maxNumChars );
 
 			return tAnc;
 		};  // End tAnc._makeSliders()
@@ -205,6 +192,16 @@
 				._makeSliders();
 
 			// Events assigned with noUiSlider creation
+
+			// console.log( 'appearance:', tAnc.node.offsetHeight, tAnc.node );
+			// var settingNode = $(tAnc.node).find('.__tt-setting')[0]
+			// console.log( 'setting:', settingNode.offsetHeight, settingNode );
+			// var controls = $(tAnc.node).find('.__tt-slider-controls')[0];
+			// console.log( 'controls:', controls.offsetHeight, controls );
+			// console.log( 'slider:', nodes.maxNumChars.offsetHeight, nodes.maxNumChars );
+			// var input = $(controls).find('.__tt-slider-input')[0];
+			// console.log( 'input:', input.offsetHeight, input );
+			// debugger;
 
 			return tAnc;
 		};

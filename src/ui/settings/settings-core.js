@@ -84,6 +84,8 @@
 			$tabs.removeClass( '__tt-active-ui' );
 			$thisTab.addClass( '__tt-active-ui' );
 
+			coreUI.update();
+
 			return tSet;
 		};
 
@@ -202,6 +204,7 @@
 
 
 		tSet._init = function ( coreUI ) {
+			console.log( 'initializing settings' );
 
 			tSet._addBase( coreUI )
 				._addEvents();
@@ -215,6 +218,8 @@
 			var constructors = uiConstructors.settings;
 			tSet.appearance = new constructors[ 'Appearance' ]( state, tSet, constructors, filepaths );
 			tSet.delays 	= new constructors[ 'Delays' ]( state, tSet, constructors, filepaths );
+
+			console.log( 'menu height:', $(tSet.nodes._menus).parent().parent()[0].offsetHeight, $(tSet.nodes._menus).parent().parent()[0] );
 
 			return tSet;
 		};

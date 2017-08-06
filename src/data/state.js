@@ -213,6 +213,40 @@
 
 
 
+		// ==== NON-STORING FUNCTIONS ====
+
+		ttSt.getForceReflowVals = function ( nodeObjs, callback ) {
+		// Force reflow all in one spot
+		// Values I, the master if this code, have found
+		// a need for so far
+
+			var dimensions = {};
+
+			for ( let nodeKey in nodes ) {
+
+				let nodeObj = nodeObjs[ nodeKey ],
+					id 		= nodeObj.id,
+					node 	= nodeObj.node;
+
+				var vals = dimensions[ id ] = {};
+
+				// Force reflow
+				// TODO: try to do this only once, but may not be possible
+				vals.clientHeight = node.clientHeight;
+				// Not giving back rect so the dimensions result can't
+				// use it to force reflow
+				var rect = node.getBoundingClientRect();
+				vals.boxTop 	= rect.top;
+				vals.boxBottom 	= rect.bottom;
+				vals.boxHeight 	= rect.height;
+
+			}  // End for every given node
+
+			return dimensions;
+		};  // End ttSt.getForceReflowVals()
+
+
+
 		// // ==== UNFORTUNATE ====
 
 		// // Doesn't belong here, not sure where to put it

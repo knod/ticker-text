@@ -16,11 +16,21 @@
 /* ============================== */
 
 html, body {
+	/* new */
 	height: 100%;
-	overflow: hidden;
-	background-color: rgba( 0, 0, 0, .4 );
+	/*overflow: hidden;*/
+	/*flex: 1;*/
+	/*display: flex;*/
+	display: inline-block;
+	width: 100%;
 	font-family: 'droid', serif;
+	/* debugging */
+	background-color: rgba( 0, 0, 0, .4 );
 }
+
+body { overflow: hidden; }
+
+main.contracted { height: 100%; }
 
 input, textarea, select, button, label {
 	font-family: 'droid', serif;
@@ -41,15 +51,19 @@ button svg {
 }
 
 #__tt {
+	/* new */
+	flex: 1;
 	display: flex;
 	flex-direction: column;
-	max-height: 100%;
-	transition: top 100ms linear;
+	/* debug testing growing */
+	/*max-height: 100%;*/
+	/*transition: top 100ms linear;*/
 }
 
 .__tt-main-section {
 	width: 100%;
 	display: flex;
+	/* new */
 	/* For absolutely positioned children */
 	position: relative;
 }
@@ -61,8 +75,13 @@ button svg {
 }
 
 #__tt_below_bar {
-	top: 100%;
+	/* new */
+	/*top: 100%;*/
+	/* debug test growing */
+	/* new */
 	display: flex;
+	/*display: block;*/
+	/*height: 100px;*/
 }
 
 #__tt #__tt_bar {
@@ -71,6 +90,8 @@ button svg {
 	justify-content: space-between;
 	align-items: center;
 	position: relative;
+	/* new (needed?) */
+	font-size: 36px;
 }
 
 /* _tt_bar_center most important*/
@@ -217,6 +238,10 @@ button img {
 	display: block;
 	overflow-y: scroll;
 	overflow-x: hidden;
+}
+
+#__tt .__tt-scrollable-y.expanded {
+	overflow-y: visible;
 }
 
 #__tt .__tt-scrollable-y > * {

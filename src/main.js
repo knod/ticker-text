@@ -31,7 +31,7 @@
 			core: 		'css-iframe/iframe.css',
 			playback: 	'css-iframe/playback.css',
 			settings: 	'css-iframe/settings.css',
-			noui: 		'css-iframe/noUI.css'
+			sliders: 	'css-iframe/noUI.css'
 		}
 	};
 

@@ -33,7 +33,7 @@
     }
 }(this, function ( $ ) {
 
-	var TTCoreUI = function ( state, parentNode, constructors, filepaths ) {
+	var TTCoreUI = function ( state, parentNode, constructors, filepaths, callback ) {
 	/*
 	* 
 	* `filepaths` has paths for child modules and iframe filepaths
@@ -44,7 +44,7 @@
 		var tCui = {};
 		tCui.id = 'coreUI'
 
-		var tickerText, textElems, $iframe;
+		var mainElem, textElems, $iframe;
 		tCui._toTrigger = {};
 
 		var originalBodyMarginTop = window.getComputedStyle( document.body ).marginTop;
@@ -56,7 +56,7 @@
 		var iframeStr 	= '<iframe id="__tt_iframe" title="Ticker Text article reader."></iframe>';
 
 		//  TODO: Change (almost) all these to id's
-		var contentStr = '<div id="__tt">\n\
+		var contentStr = '<main id="__tt">\n\
 	<div id="__tt_above_bar" class="__tt-main-section"></div>\n\
 	<div id="__tt_bar" class="__tt-main-section">\n\
 		<div id="__tt_bar_left" class="__tt-bar-section"></div>\n\
@@ -73,9 +73,10 @@
 		</div>\n\
 	</div>\n\
 	<div id="__tt_below_bar" class="__tt-main-section __tt-hidden"></div>\n\
-</div>';
+</main>';
 
 
+	'<div id="__tt_below_bar" class="__tt-main-section __tt-hidden"></div>\n\''
 
 		// =========== HOOKS =========== \\
 
@@ -113,15 +114,20 @@
 		};
 
 		tCui.start = function () {
-			return tCui.triggerTriggerable( 'show', 'play' );
+			// return tCui.triggerTriggerable( 'show', 'play' );
+			return tCui.triggerTriggerable( 'show', 'test' );
 		};
 
 		tCui.play = tCui.start;
 
 
-		tCui.show = function () {
-			$iframe.show();
-			$(tickerText).slideDown( 200, function updateAfterShow() { tCui.update(); } );  // can't `.update()` at end
+		tCui.show = function ( overrideDuration ) {
+			// // $iframe.show();
+			// $iframe[0].style.display = '';
+			// $(mainElem).slideDown( 200, function updateAfterShow() { tCui.update(); } );  // can't `.update()` at end
+
+			var duration = overrideDuration || 200;
+			$iframe.slideDown( 200, function updateAfterShowTickerText() { tCui.update(); } );  // can't `.update()` at end
 			return tCui;
 		};
 
@@ -129,9 +135,12 @@
 			tCui._toTrigger.playbackUI.wait();
 		}
 
-		tCui.hide = function () {
-			$iframe.hide();
-			$(tickerText).slideUp( 200 );
+		tCui.hide = function ( overrideDuration ) {
+			// // $iframe.hide();
+			// $iframe[0].style.display = 'none';
+			// $(mainElem).slideUp( 200 );
+			var duration = overrideDuration || 200;
+			$iframe.slideUp( 200 );
 			// Other stuff is in a setTimeout and this needs to run after those
 			// They're waiting for other DOM updates, so have to be in a setTimeout
 			// We're kind of hosed.
@@ -148,7 +157,7 @@
 		};
 
 		tCui.destroy = function () {
-			$(tickerText).remove();
+			$(mainElem).remove();
 			return tCui;
 		};
 
@@ -166,14 +175,9 @@
 			// Problem with element not being rendered yet, but no solution
 			// yet found.
 
-			// button will always stay full width
-			// tCui.nodes.textElements.style.flexBasis = 'auto';
-			// tCui.nodes.barCenter.style.flexBasis 	= 'auto';
-
 			// Let styles take effect, I hope... (https://stackoverflow.com/a/21043017)
-			// Set what the max number of characters could be if based only on the DOM
 			setTimeout(function() {
-
+				// Set what the max number of characters could be if based only on the DOM
 				var styles 		= window.getComputedStyle( tCui.nodes.barCenter ),
 					width 		= parseFloat( styles.width ),
 					fontSize 	= parseFloat( styles.fontSize ),
@@ -188,93 +192,79 @@
 				// Not undefined or 0
 				if ( DOMWidth && DOMWidth <= userWidth ) { width = DOMWidth; }
 				else { width = userWidth; }
-
 				// console.log( 'core 4:', 'DOMWidth:', DOMWidth, '; userWidth:', userWidth, '; final width:', width );
 
 				// Update the number of characters
 				state.set( {id: 'stepper'}, { maxNumCharacters: width } );
-
-				// button will always stay full width
-				// var visualWidth =  width;
-				// if ( DOMWidth && DOMWidth > userWidth ) {
-				// 	// Add a little padding if possible
-				// 	// if less than 2 is remaining, keep any value, otherwise use 2
-				// 	var diff 	= DOMWidth - userWidth,
-				// 		extra 	= Math.min( 2, DOMWidth );
-				// 	visualWidth =  width + extra;
-				// }
-
-				// tCui.nodes.textElements.style.flexBasis = visualWidth + 'em';
-				// tCui.nodes.barCenter.style.flexBasis 	= visualWidth + 'em';
 			}, 0);
 
 		};  // End tCui._resizeBarElements()
 
 
 		// iframe element sizing
-		// https://jsfiddle.net/fpd4fb80/31/
+		// XXX https://jsfiddle.net/fpd4fb80/31/
+		// Check out new plan: https://jsfiddle.net/pewka5ju/4/
 		tCui._resizeIframeAndContents = function () {
-			// There should only be one (for now...)
-			var grower = $(tickerText).find('.__tt-to-grow')[0];
 
-			// For when the element isn't made yet or isn't visible
-			if ( !grower ) { return tCui; }
+			// console.trace( '~~~~~~~~~~~~~~~~' );
 
-			var scrollable = $(grower).parent()[0],
-				scrollRect = scrollable.getBoundingClientRect();
+			var nodes 	= tCui.nodes,
+				ibody 	= nodes.body;
 
-			// Get the difference between the lowest point of the
-			// unscrolled scrollable content and the lowest visible point
-			// Takes into account everything above and including, but not
-			// below, the scrollable content
+			var main = nodes.main;
 
-			// Takes into account everything above the scrollable element
-			// including borders/padding/etc.
-			var top 			= scrollable.getBoundingClientRect().top,
-			// Takes into account the height of the element that's
-			// currently going to be scrolled
-				height 			= grower.getBoundingClientRect().height || 0,
-			// The bottom of where the contents would end if you weren't
-			// scrolled and no adjustments for size were made.
-				potentialBottom = top + height,
-			// The bottom of the the visible window
-				screenBottom 	= document.documentElement.clientHeight,
-			// How much needs to be subtracted (almost, see below) from the
-			// scrollable node's height (not contents) in order to fit on the page.
-				diff 			= (potentialBottom - screenBottom);
-			// console.log("height", height)
+			$(main).find( '.__tt-scrollable-y' ).addClass( 'expanded' );
+			// console.log( $(main).find( '.__tt-scrollable-y' )[0] );
+			main.classList.remove( 'contracted' );
 
-			// Have taken care off stuff above and in the contents
-			// Now will account for all the padding/borders, etc at
-			// the bottom that may otherwise get cut off in some browsers
-			// (Have to calcuate this again because the viewport might have changed on scroll)
-			var scrollBottom = scrollable.getBoundingClientRect().bottom,
-			// The bottom of the outer-most node, so we can pull everything
-			// up to be visible
-				outerBottom  = tickerText.getBoundingClientRect().bottom,
-				bottomDiff 	 = outerBottom - scrollBottom;
+			// main.style.display = 'block';
+			// ibody.style.height 	= 'auto';
+			// ibody.style.display = 'inline-block';
+			// console.log( 'force reflow, body scroll:', ibody.scrollHeight );
 
-			diff = diff + bottomDiff;
+			var ibodyStyles 	= window.getComputedStyle( ibody );
+			var mainStyles		= window.getComputedStyle( main );
 
-			var newHeight = height;
-			if ( diff > 0 ) {
-				newHeight = height - diff;
-			}
-			scrollable.style.height = newHeight + 'px';
+			// console.log( 'body offset, scroll, margin, main bottom:', ibody.offsetHeight, ibody.scrollHeight, ibodyStyles.marginTop, main.clientBottom, mainStyles.borderBottomWidth );
+			// console.log( ibody.offsetHeight, ibody.getBoundingClientRect().height, window.getComputedStyle( ibody ).height, ibody );
 
-			// Since the outer element is being used to determine the height of
-			// the iframe, I assume it's at the very top of the iframe, so no
-			// extra 'outer top' value needs to be subtracted.
-			var currentOuterHeight 	= top + newHeight + bottomDiff;
+			//var ibodyHeight 	= ibody.getBoundingClientRect().height;
+			// Total expanded height of the whole iframe
+			// Has to be main. Body won't resize to something smaller than the iframe, even on `height: auto;`
+			var ibodyHeight = main.scrollHeight
+				+ parseInt( mainStyles.marginTop ) + parseInt( mainStyles.marginBottom )
+				+ parseInt( ibodyStyles.marginTop ) + parseInt( ibodyStyles.marginBottom )
+				+ parseInt( mainStyles.borderTopWidth ) + parseInt( mainStyles.borderBottomWidth )
+				+ parseInt( ibodyStyles.borderTopWidth ) + parseInt( ibodyStyles.borderBottomWidth );
+			// var ibodyHeight 	= ibody.scrollHeight + parseInt( ibodyStyles.marginTop ) + parseInt( ibodyStyles.marginBottom );
 
-			$iframe[0].style.height = currentOuterHeight + 'px';
+			// console.log( 'main offset, scroll, margin:', main.offsetHeight, main.scrollHeight, parseInt( mainStyles.marginTop ) );
+			// console.log( 'iframe total:', ibodyHeight );
+			var viewportHeight 	= document.documentElement.clientHeight;// - 30;
+			// console.log( 'viewport height:', viewportHeight );
+			var finalHeight 	= Math.min( ibodyHeight, viewportHeight );
+			// console.log( 'final:', finalHeight );
+
+			$iframe[0].style.height = finalHeight + 'px';
+			// ibody.style.display 	= 'flex';
+			// ibody.style.height 		= '100%';
+
+			console.log( 'after change:', ibody, ibody.clientHeight, ibody.getBoundingClientRect().height, window.getComputedStyle( ibody ).height );
 
 			// body position relative so everything moves down properly
-			// (google search result pages don't even seem to get it right)
+			// (google search result pages don't even seem to get it right,
+			// just use html as the parent)
+			// Afraid this will mess up other people's attempts to work with
+			// the page, especially since it keeps getting re-applied, but I'm
+			// not sure what else I can do.
 			document.body.style.position = 'relative';
-			// html margin or padding too? Is that possible?
-			document.body.style.marginTop = currentOuterHeight + parseInt(originalBodyMarginTop) + 'px';
+			document.body.style.marginTop = finalHeight + parseInt(originalBodyMarginTop) + 'px';
 
+			// Allow stuff to scroll again
+			$(main).find( '.__tt-scrollable-y' ).removeClass( 'expanded' );
+			// Make the containers (of the containers) of the scrolling stuff
+			// the right short height
+			main.classList.add( 'contracted' );
 
 			return tCui;
 		};  // End tCui._resizeIframeAndContents()
@@ -290,8 +280,13 @@
 			// work until this was called for the second time. Something to do with going
 			// from height: 0 to whatever height
 
-			setTimeout(tCui._resizeIframeAndContents, 4);
-			setTimeout(tCui._resizeBarElements, 4);
+			// // Force reflow
+			// console.log( tCui.nodes.body.clientHeight );
+
+			// setTimeout(tCui._resizeIframeAndContents, 0);
+			// setTimeout(tCui._resizeBarElements, 0);
+			tCui._resizeIframeAndContents();
+			tCui._resizeBarElements();
 			// Delay probably won't work when there's a lot of lag.
 			// TODO: Wait for an element to appear properly before calling resize
  
@@ -307,11 +302,34 @@
 
 		tCui._addEvents = function () {
 			$(tCui.nodes.close).on( 'touchend click', tCui.close );
-			$(tickerText).on( 'mousedown mouseup touchstart touchend', tCui.update );
+			// $(mainElem).on( 'mousedown mouseup touchstart touchend', tCui.update );
 			$(window).on( 'resize', tCui.update );
 			// Event for content zooming?
 			return tCui;
 		};
+
+
+		var styleCount 	 = 0,
+			stylesNeeded = 0;
+		tCui._afterStyles = function () {
+
+			styleCount++;
+
+			if ( styleCount < stylesNeeded ) {
+				console.log( 'count:', styleCount );
+				return;
+			} else {
+				console.log( 'styles loaded!' );
+				callback( state, tCui );
+			}
+
+			return tCui;
+		};  // End tCui._afterStyles()
+
+		tCui._listenForStyleLoad = function ( node ) {
+			node.addEventListener( 'load', tCui._afterStyles );
+			return node;
+		};  // End tCui._listenForStyleLoad()
 
 
 		tCui._addNodes = function () {
@@ -326,29 +344,33 @@
 
 			var iDoc = $iframe[0].contentDocument;
 
-			tickerText = tCui._tickerTextNode = $(contentStr)[0];
-			$(tickerText).appendTo( iDoc.body );
+			mainElem = $(contentStr)[0];
+			$(mainElem).appendTo( iDoc.body );
+
+			// Styles for all of Ticker Text here!
 
 			// Styles that affect the parent document
-			var styles1 	= iDoc.createElement("link");
-			styles1.href 	= browser.runtime.getURL( filepaths.core );
-			styles1.type 	= "text/css";
-			styles1.rel 	= "stylesheet";
-			$(styles1).appendTo( iDoc.head );
+			var stylesFrame 	= iDoc.createElement("link");
+			stylesFrame.href 	= browser.runtime.getURL( filepaths.core );
+			stylesFrame.type 	= "text/css";
+			stylesFrame.rel 	= "stylesheet";
 
 			// This should only affect settings, but atm there's stuff that
 			// affects playback buttons, etc.
-			var styles2 	= iDoc.createElement("link");
-			styles2.href 	= browser.runtime.getURL( filepaths.settings );
-			styles2.type 	= "text/css";
-			styles2.rel 	= "stylesheet";
-			$(styles2).appendTo( iDoc.head );
+			var stylesSetts 	= iDoc.createElement("link");
+			stylesSetts.href 	= browser.runtime.getURL( filepaths.settings );
+			stylesSetts.type 	= "text/css";
+			stylesSetts.rel 	= "stylesheet";
 
 			var stylesSliders 	= iDoc.createElement("link");
-			stylesSliders.href 	= browser.runtime.getURL( filepaths.noui );
+			stylesSliders.href 	= browser.runtime.getURL( filepaths.sliders );
 			stylesSliders.type 	= "text/css";
 			stylesSliders.rel 	= "stylesheet";
-			$(stylesSliders).appendTo( iDoc.head );
+
+			var stylesPlab 		= iDoc.createElement("link");
+			stylesPlab.href 	= browser.runtime.getURL( filepaths.playback );
+			stylesPlab.type 	= "text/css";
+			stylesPlab.rel 		= "stylesheet";
 
 			state.doc = iDoc;
 
@@ -357,20 +379,21 @@
 				doc: 			iDoc,
 				head: 			iDoc.head,
 				body: 			iDoc.body,
-				app: 			tickerText,
-				above: 			$(tickerText).find('#__tt_above_bar')[0],
-				bar: 			$(tickerText).find('#__tt_bar')[0],
-				barLeft: 		$(tickerText).find('#__tt_bar_left')[0],
-				barCenter: 		$(tickerText).find('#__tt_bar_center')[0],
-				aboveText: 		$(tickerText).find('#__tt_above_text_elements')[0],
-				leftOfText: 	$(tickerText).find('#__tt_left_text_elements')[0],
-				textElements: 	$(tickerText).find('#__tt_text_elements')[0],
-				rightOfText: 	$(tickerText).find('#__tt_right_text_elements')[0],
-				belowText: 		$(tickerText).find('#__tt_below_text_elements')[0],
-				barRight: 		$(tickerText).find('#__tt_bar_right')[0],
-				readFullArticle:$(tickerText).find('#__tt_read_full_article')[0],
-				close: 			$(tickerText).find('#__tt_close')[0],
-				below: 			$(tickerText).find('#__tt_below_bar')[0]
+				main: 			mainElem,
+				above: 			$(mainElem).find('#__tt_above_bar')[0],
+				bar: 			$(mainElem).find('#__tt_bar')[0],
+				barLeft: 		$(mainElem).find('#__tt_bar_left')[0],
+				barCenter: 		$(mainElem).find('#__tt_bar_center')[0],
+				aboveText: 		$(mainElem).find('#__tt_above_text_elements')[0],
+				leftOfText: 	$(mainElem).find('#__tt_left_text_elements')[0],
+				textElements: 	$(mainElem).find('#__tt_text_elements')[0],
+				rightOfText: 	$(mainElem).find('#__tt_right_text_elements')[0],
+				belowText: 		$(mainElem).find('#__tt_below_text_elements')[0],
+				barRight: 		$(mainElem).find('#__tt_bar_right')[0],
+				readFullArticle:$(mainElem).find('#__tt_read_full_article')[0],
+				close: 			$(mainElem).find('#__tt_close')[0],
+				below: 			$(mainElem).find('#__tt_below_bar')[0],
+				styles: 		[ stylesFrame, stylesSetts, stylesSliders, stylesPlab ]
 			}
 
 			return tCui;
@@ -409,10 +432,23 @@
 				}, 'xml' );
 			});
 
+			var iDoc 		= tCui.nodes.doc,
+				styleNodes 	= tCui.nodes.styles;
+			stylesNeeded 	= styleNodes.length;
+
+			for (let nodei = 0; nodei < styleNodes.length; nodei++) {
+				let node = styleNodes[ nodei ];
+				tCui._listenForStyleLoad( node );
+				iDoc.head.appendChild( node );
+			};
+
 			// This should not be visible until it's .show()n
-			$iframe.hide();
-			// $(tickerText).hide( 0, tCui.update )  // breaks things?
-			$('#__tt_iframe').hide(0);
+			// $iframe.hide();
+			// $(mainElem).hide( 0, tCui.update )  // breaks things?
+			// $('#__tt_iframe').hide(0);
+			// tCui.update();
+
+			// tCui.hide( 0 );
 
 			return tCui;
 		};

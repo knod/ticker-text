@@ -74,8 +74,12 @@
 /* See comments on the thread */
 #__tt_settings_container {
   width: 100%;
+  /* debug testing growing */
+  /* new */
   display: flex;
   flex-direction: column;
+  /*display: block;*/
+  /*height: 100px;*/
 }
 
 #__tt_settings_tabs,
@@ -95,9 +99,9 @@
 
 .__tt-settings-tab {
   flex-grow: 1;
-  padding: 0.1em;
   display: flex;
   justify-content: center;
+  padding: 0.1em;
 }
 
 #__tt_settings_menus {
@@ -111,6 +115,9 @@
   flex-wrap: wrap;
   justify-content: space-around;
   padding: 0 .5%;
+  /* new (needed?) */
+  /*overflow: hidden;*/
+  /*overflow: scroll;*/
 }
 
 #__tt .__tt-setting {

@@ -126,10 +126,10 @@
 			return tPUI;
 		};
 		tPUI.update = function () {
-			state.player.current();  // show current fragment
-			// get it in a non-jump state and, ideally, back to its previous play/pause state...
-			state.player.revert();
-			return tPUI;
+			// state.player.current();  // show current fragment
+			// // get it in a non-jump state and, ideally, back to its previous play/pause state...
+			// state.player.revert();
+			// return tPUI;
 		};  // End tPUI.update()
 
 		// -- non-iterable -- \\
@@ -435,14 +435,6 @@
 			$(controls).appendTo( coreNodes.bar );
 			$(rewindSentence).appendTo( coreNodes.barLeft );
 			$( readFullArticle ).appendTo( coreNodes.readFullArticle );
-
-			// STYLES
-
-			var styles1 	= coreNodes.doc.createElement("link");
-			styles1.href 	= browser.runtime.getURL( filepaths.playback );
-			styles1.type 	= "text/css";
-			styles1.rel 	= "stylesheet";
-			$(styles1).appendTo( coreNodes.head );
 
 			coreUIObj.addTriggerable( tPUI );
 
