@@ -122,15 +122,11 @@
 					// // Let styles take effect, I hope... (https://stackoverflow.com/a/21043017)
 					// setTimeout(function updateWidth() {
 
+						// Not undefined or 0
 						var DOMWidth 	= stepState.widthByEm,
 							userWidth 	= stepState.maxNumCharacters_user,
-							width 		= null;
-
-						// Get the smaller between the element width and the user setting
-						// Not undefined or 0
-						if ( DOMWidth && DOMWidth <= userWidth ) { width = DOMWidth; }
-						else { width = userWidth; }
-						// console.log( 'core 4:', 'DOMWidth:', DOMWidth, '; userWidth:', userWidth, '; final width:', width );
+							width 		= Math.min( DOMWidth, userWidth);
+							width 		= Math.max( 1, width );
 
 						// Update the number of characters
 						state.set( {id: 'stepper'}, { maxNumCharacters: width } );
@@ -192,16 +188,6 @@
 				._makeSliders();
 
 			// Events assigned with noUiSlider creation
-
-			// console.log( 'appearance:', tAnc.node.offsetHeight, tAnc.node );
-			// var settingNode = $(tAnc.node).find('.__tt-setting')[0]
-			// console.log( 'setting:', settingNode.offsetHeight, settingNode );
-			// var controls = $(tAnc.node).find('.__tt-slider-controls')[0];
-			// console.log( 'controls:', controls.offsetHeight, controls );
-			// console.log( 'slider:', nodes.maxNumChars.offsetHeight, nodes.maxNumChars );
-			// var input = $(controls).find('.__tt-slider-input')[0];
-			// console.log( 'input:', input.offsetHeight, input );
-			// debugger;
 
 			return tAnc;
 		};

@@ -140,6 +140,7 @@
 			// $iframe[0].style.display = 'none';
 			// $(mainElem).slideUp( 200 );
 			var duration = overrideDuration || 200;
+			// TODO: Try a callback function in slideUp()
 			$iframe.slideUp( 200 );
 			// Other stuff is in a setTimeout and this needs to run after those
 			// They're waiting for other DOM updates, so have to be in a setTimeout
@@ -149,15 +150,9 @@
 				// setTimeout(function(){
 					setTimeout(function(){
 						document.body.style.marginTop = originalBodyMarginTop;
-						// console.log( 'hiding', originalBodyMarginTop, window.getComputedStyle(document.body).marginTop );
 					}, 0);
 				// }, 0);
 			}, 0);
-			return tCui;
-		};
-
-		tCui.destroy = function () {
-			$(mainElem).remove();
 			return tCui;
 		};
 
@@ -172,8 +167,8 @@
 			if ( !tCui.nodes ) { return tCui; }
 
 			// Works, but sometimes not till the update after the one that has the change
-			// Problem with element not being rendered yet, but no solution
-			// yet found.
+			// Problem with element not being rendered yet? No solution
+			// yet found. (would force reflow work?)
 
 			// Let styles take effect, I hope... (https://stackoverflow.com/a/21043017)
 			setTimeout(function() {
@@ -184,15 +179,11 @@
 					elemChars 	= Math.floor( width / fontSize );
 				state.set( { id: 'stepper' }, { widthByEm: elemChars } );
 
-				var DOMWidth 	= state.stepper.widthByEm,
-					userWidth 	= state.stepper.maxNumCharacters_user,
-					width 		= null;
-
-				// Get the smaller between the element width and the user setting
 				// Not undefined or 0
-				if ( DOMWidth && DOMWidth <= userWidth ) { width = DOMWidth; }
-				else { width = userWidth; }
-				// console.log( 'core 4:', 'DOMWidth:', DOMWidth, '; userWidth:', userWidth, '; final width:', width );
+				var DOMWidth 	= state.stepper.widthByEm || 1,
+					userWidth 	= state.stepper.maxNumCharacters_user,
+					width 		= Math.min( DOMWidth, userWidth);
+					width 		= Math.max( 1, width );
 
 				// Update the number of characters
 				state.set( {id: 'stepper'}, { maxNumCharacters: width } );
@@ -202,69 +193,46 @@
 
 
 		// iframe element sizing
-		// XXX https://jsfiddle.net/fpd4fb80/31/
-		// Check out new plan: https://jsfiddle.net/pewka5ju/4/
+		// https://jsfiddle.net/pewka5ju/4/
 		tCui._resizeIframeAndContents = function () {
 
-			// console.trace( '~~~~~~~~~~~~~~~~' );
-
 			var nodes 	= tCui.nodes,
-				ibody 	= nodes.body;
-
-			var main = nodes.main;
-
+				ibody 	= nodes.body,
+				main 	= nodes.main;
+			// Let everything expand to the biggest heights possible
 			$(main).find( '.__tt-scrollable-y' ).addClass( 'expanded' );
-			// console.log( $(main).find( '.__tt-scrollable-y' )[0] );
 			main.classList.remove( 'contracted' );
-
-			// main.style.display = 'block';
-			// ibody.style.height 	= 'auto';
-			// ibody.style.display = 'inline-block';
-			// console.log( 'force reflow, body scroll:', ibody.scrollHeight );
 
 			var ibodyStyles 	= window.getComputedStyle( ibody );
 			var mainStyles		= window.getComputedStyle( main );
 
-			// console.log( 'body offset, scroll, margin, main bottom:', ibody.offsetHeight, ibody.scrollHeight, ibodyStyles.marginTop, main.clientBottom, mainStyles.borderBottomWidth );
-			// console.log( ibody.offsetHeight, ibody.getBoundingClientRect().height, window.getComputedStyle( ibody ).height, ibody );
-
-			//var ibodyHeight 	= ibody.getBoundingClientRect().height;
 			// Total expanded height of the whole iframe
 			// Has to be main. Body won't resize to something smaller than the iframe, even on `height: auto;`
-			var ibodyHeight = main.scrollHeight
+			var expandedHeight = main.scrollHeight
 				+ parseInt( mainStyles.marginTop ) + parseInt( mainStyles.marginBottom )
 				+ parseInt( ibodyStyles.marginTop ) + parseInt( ibodyStyles.marginBottom )
 				+ parseInt( mainStyles.borderTopWidth ) + parseInt( mainStyles.borderBottomWidth )
 				+ parseInt( ibodyStyles.borderTopWidth ) + parseInt( ibodyStyles.borderBottomWidth );
-			// var ibodyHeight 	= ibody.scrollHeight + parseInt( ibodyStyles.marginTop ) + parseInt( ibodyStyles.marginBottom );
 
-			// console.log( 'main offset, scroll, margin:', main.offsetHeight, main.scrollHeight, parseInt( mainStyles.marginTop ) );
-			// console.log( 'iframe total:', ibodyHeight );
-			var viewportHeight 	= document.documentElement.clientHeight;// - 30;
-			// console.log( 'viewport height:', viewportHeight );
-			var finalHeight 	= Math.min( ibodyHeight, viewportHeight );
-			// console.log( 'final:', finalHeight );
-
+			// Get the height that's available on screen
+			var viewportHeight 	= document.documentElement.clientHeight;
+			// Pick which ever is smaller
+			var finalHeight 	= Math.min( expandedHeight, viewportHeight );
+			// Make the iframe that tall
 			$iframe[0].style.height = finalHeight + 'px';
-			// ibody.style.display 	= 'flex';
-			// ibody.style.height 		= '100%';
 
-			console.log( 'after change:', ibody, ibody.clientHeight, ibody.getBoundingClientRect().height, window.getComputedStyle( ibody ).height );
+			// Shrink everything back down to fit in that final height
+			$(main).find( '.__tt-scrollable-y' ).removeClass( 'expanded' );
+			main.classList.add( 'contracted' );
 
 			// body position relative so everything moves down properly
+			// so we can see the content as it was meant to be seen
 			// (google search result pages don't even seem to get it right,
-			// just use html as the parent)
-			// Afraid this will mess up other people's attempts to work with
-			// the page, especially since it keeps getting re-applied, but I'm
-			// not sure what else I can do.
+			// they just use html as the position parent)
+			// This might mess up other people's attempts to work with the page,
+			// especially since it keeps getting re-applied. Alternatives?
 			document.body.style.position = 'relative';
 			document.body.style.marginTop = finalHeight + parseInt(originalBodyMarginTop) + 'px';
-
-			// Allow stuff to scroll again
-			$(main).find( '.__tt-scrollable-y' ).removeClass( 'expanded' );
-			// Make the containers (of the containers) of the scrolling stuff
-			// the right short height
-			main.classList.add( 'contracted' );
 
 			return tCui;
 		};  // End tCui._resizeIframeAndContents()
@@ -280,16 +248,9 @@
 			// work until this was called for the second time. Something to do with going
 			// from height: 0 to whatever height
 
-			// // Force reflow
-			// console.log( tCui.nodes.body.clientHeight );
-
-			// setTimeout(tCui._resizeIframeAndContents, 0);
-			// setTimeout(tCui._resizeBarElements, 0);
+			// Need for setTimeout removed by waiting to load styles from injected stylesheet
 			tCui._resizeIframeAndContents();
 			tCui._resizeBarElements();
-			// Delay probably won't work when there's a lot of lag.
-			// TODO: Wait for an element to appear properly before calling resize
- 
  			// Update the number of characters currently showing
 			tCui.triggerTriggerable( null, 'update' );
 
@@ -302,7 +263,7 @@
 
 		tCui._addEvents = function () {
 			$(tCui.nodes.close).on( 'touchend click', tCui.close );
-			// $(mainElem).on( 'mousedown mouseup touchstart touchend', tCui.update );
+			// TODO: resize word even when paused
 			$(window).on( 'resize', tCui.update );
 			// Event for content zooming?
 			return tCui;
@@ -313,18 +274,17 @@
 			stylesNeeded = 0;
 		tCui._afterStyles = function () {
 
+			// Only do stuff after all styles have been loaded
 			styleCount++;
-
 			if ( styleCount < stylesNeeded ) {
-				console.log( 'count:', styleCount );
 				return;
 			} else {
-				console.log( 'styles loaded!' );
 				callback( state, tCui );
 			}
 
 			return tCui;
 		};  // End tCui._afterStyles()
+
 
 		tCui._listenForStyleLoad = function ( node ) {
 			node.addEventListener( 'load', tCui._afterStyles );
